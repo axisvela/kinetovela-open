@@ -129,6 +129,3 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
-
-
-
