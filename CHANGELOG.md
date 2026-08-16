@@ -5,9 +5,11 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 ## 0.28.0 - 2026-08-16
 
+
 - Synchronize the public SDK version with the core release (ONTOVELA StateView
   consumption, KIN-073).
-
+- Publish binaries for core release 0.28.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
 ## 0.27.0 - 2026-08-16
 
 - Publish binaries for core release 0.27.0 across windows/amd64, linux/amd64,
@@ -127,5 +129,6 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
+
 
 
