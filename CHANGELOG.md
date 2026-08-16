@@ -3,11 +3,12 @@
 All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
 and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
-## 0.30.0 - 2026-08-16
+## 0.30.0 - 2026-08-17
 
 - Synchronize the public SDK version with the core release (fleet SLO
   dashboards, KIN-075).
-
+- Publish binaries for core release 0.30.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
 ## 0.29.0 - 2026-08-16
 
 - Synchronize the public SDK version with the core release (operational event
@@ -140,4 +141,5 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
+
 
