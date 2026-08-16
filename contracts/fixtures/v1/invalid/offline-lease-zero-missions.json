@@ -1,0 +1,1 @@
+{"schema_version":"1.0.0","lease_id":"lease:wh3-01","authority_ref":"grant:warehouse-ops-2026-08","robot_ref":"robot:wh3-01","expires_at":"2026-08-15T12:00:00Z","max_missions":0,"allowed_effects":["pallet.location_changed"]}

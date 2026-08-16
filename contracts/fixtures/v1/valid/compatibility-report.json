@@ -1,0 +1,1 @@
+{"schema_version":"1.0.0","report_id":"compat:mission-1.0.0","contract_name":"Mission","from_version":"0.0.0","to_version":"1.0.0","compatibility":"breaking","summary":"Initial v1 contract freeze","fixture_refs":["contracts/fixtures/v1/valid/mission.json"],"review_refs":["adr:mission-v1"],"generated_at":"2026-08-15T12:00:00Z"}

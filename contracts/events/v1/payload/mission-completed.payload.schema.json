@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-mission-completed.payload.v1.schema.json",
+  "title": "KINETOVELA mission.completed payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["mission_id", "completed_at", "effect_ref"],
+  "properties": {
+    "mission_id": { "type": "string", "minLength": 1 },
+    "completed_at": { "type": "string", "format": "date-time" },
+    "effect_ref": { "type": "string", "minLength": 1 }
+  }
+}

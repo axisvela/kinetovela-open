@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "mission_id": "mission:warehouse/pallet-342",
+  "plan_ref": "plan:warehouse/pallet-relocation@sha256:abc123",
+  "capability_refs": ["cap:warehouse.move-pallet@3.2.0"],
+  "authority_ref": "grant:warehouse-ops-2026-08",
+  "safety_envelope_ref": "safe:wh3-forklift-v5",
+  "expected_effects": ["pallet:Pallet-342.location=Dock-12"],
+  "deadline_at": "2026-08-15T12:00:00Z"
+}

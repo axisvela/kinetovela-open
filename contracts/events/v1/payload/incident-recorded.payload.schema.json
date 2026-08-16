@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-incident-recorded.payload.v1.schema.json",
+  "title": "KINETOVELA incident.recorded payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["incident_id", "kind", "detail", "occurred_at"],
+  "properties": {
+    "incident_id": { "type": "string", "minLength": 1 },
+    "kind": { "type": "string", "minLength": 1 },
+    "detail": { "type": "string", "minLength": 1 },
+    "occurred_at": { "type": "string", "format": "date-time" }
+  }
+}

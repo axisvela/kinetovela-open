@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-effect-failed.payload.v1.schema.json",
+  "title": "KINETOVELA effect.failed payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["effect_record_id", "command_ref", "reason", "failed_at"],
+  "properties": {
+    "effect_record_id": { "type": "string", "minLength": 1 },
+    "command_ref": { "type": "string", "minLength": 1 },
+    "reason": { "type": "string", "minLength": 1 },
+    "failed_at": { "type": "string", "format": "date-time" }
+  }
+}

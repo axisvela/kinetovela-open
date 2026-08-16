@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-effect-observed.payload.v1.schema.json",
+  "title": "KINETOVELA effect.observed payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["effect_record_id", "command_ref", "observed_at"],
+  "properties": {
+    "effect_record_id": { "type": "string", "minLength": 1 },
+    "command_ref": { "type": "string", "minLength": 1 },
+    "observed_at": { "type": "string", "format": "date-time" }
+  }
+}

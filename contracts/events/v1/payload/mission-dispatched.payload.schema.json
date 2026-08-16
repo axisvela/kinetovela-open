@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-mission-dispatched.payload.v1.schema.json",
+  "title": "KINETOVELA mission.dispatched payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["mission_id", "robot_id", "command_ref", "assigned_at"],
+  "properties": {
+    "mission_id": { "type": "string", "minLength": 1 },
+    "robot_id": { "type": "string", "minLength": 1 },
+    "command_ref": { "type": "string", "minLength": 1 },
+    "assigned_at": { "type": "string", "format": "date-time" }
+  }
+}

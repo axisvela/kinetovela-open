@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-fleet-updated.payload.v1.schema.json",
+  "title": "KINETOVELA fleet.updated payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fleet_id", "membership_delta", "updated_at"],
+  "properties": {
+    "fleet_id": { "type": "string", "minLength": 1 },
+    "membership_delta": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

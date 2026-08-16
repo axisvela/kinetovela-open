@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-robot-released.payload.v1.schema.json",
+  "title": "KINETOVELA robot.released payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["robot_id", "authority_ref", "released_at"],
+  "properties": {
+    "robot_id": { "type": "string", "minLength": 1 },
+    "authority_ref": { "type": "string", "minLength": 1 },
+    "released_at": { "type": "string", "format": "date-time" }
+  }
+}

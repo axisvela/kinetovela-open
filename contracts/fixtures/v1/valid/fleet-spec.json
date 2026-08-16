@@ -1,0 +1,1 @@
+{"schema_version":"1.0.0","fleet_id":"fleet:wh3","owner":"org:warehouse-ops","scheduler_profile":"scheduler:baseline-v1","membership_policy":"site:wh3 AND class:amr-forklift.v2"}

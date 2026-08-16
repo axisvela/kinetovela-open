@@ -1,0 +1,12 @@
+{
+  "spec_version": "0.2",
+  "id": "evt_invalid_incident_recorded",
+  "type": "kinetovela.incident.recorded",
+  "source": "kinetovela:control-plane",
+  "payload": {
+    "incident_id": "incident:1",
+    "kind": "duplicate_effect",
+    "detail": "effect:2 reported twice",
+    "occurred_at": "2026-08-16T10:42:00Z"
+  }
+}

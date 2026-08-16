@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-lease-enforced.payload.v1.schema.json",
+  "title": "KINETOVELA lease.enforced payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["lease_id", "robot_id", "decision", "enforced_at"],
+  "properties": {
+    "lease_id": { "type": "string", "minLength": 1 },
+    "robot_id": { "type": "string", "minLength": 1 },
+    "decision": { "enum": ["granted", "denied"] },
+    "enforced_at": { "type": "string", "format": "date-time" }
+  }
+}

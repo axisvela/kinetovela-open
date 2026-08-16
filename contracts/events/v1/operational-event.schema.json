@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-operational-event.v1.schema.json",
+  "title": "KINETOVELA Operational Event Envelope",
+  "type": "object",
+  "allOf": [
+    { "$ref": "https://schemas.axisrobo.com/harmovela-envelope.v0.2.schema.json" },
+    { "if": { "properties": { "type": { "const": "kinetovela.mission.dispatched" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-mission-dispatched.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.mission.completed" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-mission-completed.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.mission.failed" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-mission-failed.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.robot.quarantined" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-robot-quarantined.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.robot.released" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-robot-released.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.fleet.updated" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-fleet-updated.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.effect.observed" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-effect-observed.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.effect.failed" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-effect-failed.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.incident.recorded" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-incident-recorded.payload.v1.schema.json" } } } },
+    { "if": { "properties": { "type": { "const": "kinetovela.lease.enforced" } } },
+      "then": { "properties": { "payload": { "$ref": "https://schemas.axisrobo.com/kinetovela-lease-enforced.payload.v1.schema.json" } } } }
+  ]
+}

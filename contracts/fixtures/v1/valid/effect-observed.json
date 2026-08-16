@@ -1,0 +1,12 @@
+{
+  "spec_version": "0.2",
+  "id": "evt_effect_observed_1",
+  "type": "kinetovela.effect.observed",
+  "source": "kinetovela:site-gateway",
+  "created_at": "2026-08-16T10:31:00Z",
+  "payload": {
+    "effect_record_id": "effect:1",
+    "command_ref": "cmd:1",
+    "observed_at": "2026-08-16T10:31:00Z"
+  }
+}
