@@ -7,7 +7,8 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Synchronize the public SDK version with the core release (evidence retention
   controls, KIN-076).
-
+- Publish binaries for core release 0.31.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
 ## 0.30.0 - 2026-08-17
 
 - Synchronize the public SDK version with the core release (fleet SLO
@@ -146,5 +147,6 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
+
 
 
