@@ -7,7 +7,8 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Synchronize the public SDK version with the core release (counterfactual
   incident replay, KIN-086).
-
+- Publish binaries for core release 0.41.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
 ## 0.40.0 - 2026-08-17
 
 - Synchronize the public SDK version with the core release (trace replay
@@ -206,6 +207,7 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
+
 
 
 
