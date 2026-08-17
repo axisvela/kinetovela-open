@@ -7,7 +7,8 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Synchronize the public SDK version with the core release (closed-loop autonomy
   pilot, KIN-100, completing M4).
-
+- Publish binaries for core release 0.55.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
 ## 0.54.0 - 2026-08-18
 
 - Synchronize the public SDK version with the core release (KINET-Bench K9,
@@ -290,6 +291,7 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
+
 
 
 
