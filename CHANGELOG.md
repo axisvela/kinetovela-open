@@ -7,7 +7,8 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Synchronize the public SDK version with the core release (simulation scenario
   submission, KIN-082).
-
+- Publish binaries for core release 0.37.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
 ## 0.36.0 - 2026-08-17
 
 - Synchronize the public SDK version with the core release (mission preflight
@@ -182,6 +183,7 @@ and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
+
 
 
 
