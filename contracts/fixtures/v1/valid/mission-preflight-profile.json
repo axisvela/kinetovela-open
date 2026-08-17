@@ -1,0 +1,11 @@
+{
+  "spec_version": "1.0.0",
+  "profile_id": "preflight:1",
+  "mission_ref": "mission:1",
+  "plan_digest": "sha256:abc123",
+  "safety_envelope_ref": "safe:1",
+  "authority_ref": "authority:1",
+  "robot_class": "amr",
+  "expected_effects": ["move_to_pose", "dock"],
+  "fallback_profile": "safe_stop"
+}

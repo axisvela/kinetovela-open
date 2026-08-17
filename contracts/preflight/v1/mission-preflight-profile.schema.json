@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-mission-preflight-profile.v1.schema.json",
+  "title": "KINETOVELA Mission Preflight Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version", "profile_id", "mission_ref", "plan_digest",
+    "safety_envelope_ref", "authority_ref", "robot_class",
+    "expected_effects", "fallback_profile"
+  ],
+  "properties": {
+    "spec_version": { "const": "1.0.0" },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "mission_ref": { "type": "string", "minLength": 1 },
+    "plan_digest": { "type": "string", "minLength": 1 },
+    "safety_envelope_ref": { "type": "string", "minLength": 1 },
+    "authority_ref": { "type": "string", "minLength": 1 },
+    "robot_class": { "type": "string", "minLength": 1 },
+    "expected_effects": {
+      "type": "array", "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "fallback_profile": { "type": "string", "minLength": 1 }
+  }
+}

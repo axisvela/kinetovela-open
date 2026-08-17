@@ -1,0 +1,10 @@
+{
+  "spec_version": "1.0.0",
+  "profile_id": "preflight:2",
+  "mission_ref": "mission:2",
+  "safety_envelope_ref": "safe:1",
+  "authority_ref": "authority:1",
+  "robot_class": "amr",
+  "expected_effects": ["move_to_pose"],
+  "fallback_profile": "safe_stop"
+}
