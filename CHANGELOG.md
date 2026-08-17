@@ -3,6 +3,11 @@
 All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
 and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
+## 0.39.0 - 2026-08-17
+
+- Synchronize the public SDK version with the core release (rollout assurance
+  gate, KIN-084).
+
 ## 0.38.0 - 2026-08-17
 
 - Synchronize the public SDK version with the core release (release assurance
