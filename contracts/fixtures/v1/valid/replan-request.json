@@ -1,0 +1,9 @@
+{
+  "spec_version": "1.0.0",
+  "request_id": "replan:1",
+  "mission_ref": "mission:1",
+  "plan_digest": "sha256:abc123",
+  "revision_reason": "goal_change",
+  "deviation": "goal outcome changed after preflight",
+  "affected_nodes": ["node:1", "node:2"]
+}

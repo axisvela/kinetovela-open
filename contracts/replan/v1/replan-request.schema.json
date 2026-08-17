@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-replan-request.v1.schema.json",
+  "title": "KINETOVELA Replan Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version", "request_id", "mission_ref", "plan_digest",
+    "revision_reason", "deviation", "affected_nodes"
+  ],
+  "properties": {
+    "spec_version": { "const": "1.0.0" },
+    "request_id": { "type": "string", "minLength": 1 },
+    "mission_ref": { "type": "string", "minLength": 1 },
+    "plan_digest": { "type": "string", "minLength": 1 },
+    "revision_reason": {
+      "enum": ["authority_change", "goal_change", "manual", "policy_change", "state_change"]
+    },
+    "deviation": { "type": "string", "minLength": 1 },
+    "affected_nodes": {
+      "type": "array", "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

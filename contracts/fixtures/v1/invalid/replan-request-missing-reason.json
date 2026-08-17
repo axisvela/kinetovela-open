@@ -1,0 +1,8 @@
+{
+  "spec_version": "1.0.0",
+  "request_id": "replan:2",
+  "mission_ref": "mission:2",
+  "plan_digest": "sha256:def456",
+  "deviation": "grant revoked",
+  "affected_nodes": ["node:1"]
+}
