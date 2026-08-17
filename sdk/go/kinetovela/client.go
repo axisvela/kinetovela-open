@@ -2,7 +2,7 @@
 package kinetovela
 
 // Version is the SDK semantic version, synchronized with the core releases.
-const Version = "0.53.0"
+const Version = "0.54.0"
 
 
 
