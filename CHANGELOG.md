@@ -3,6 +3,11 @@
 All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
 and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
 
+## 0.55.0 - 2026-08-18
+
+- Synchronize the public SDK version with the core release (closed-loop autonomy
+  pilot, KIN-100, completing M4).
+
 ## 0.54.0 - 2026-08-18
 
 - Synchronize the public SDK version with the core release (KINET-Bench K9,
