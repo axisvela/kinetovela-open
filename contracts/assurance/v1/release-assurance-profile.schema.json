@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisrobo.com/kinetovela-release-assurance-profile.v1.schema.json",
+  "title": "KINETOVELA Release Assurance Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version", "profile_id", "release_version",
+    "run_refs", "aggregate_verdict"
+  ],
+  "properties": {
+    "spec_version": { "const": "1.0.0" },
+    "profile_id": { "type": "string", "minLength": 1 },
+    "release_version": { "type": "string", "minLength": 1 },
+    "run_refs": {
+      "type": "array", "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "aggregate_verdict": {
+      "enum": ["pass", "fail", "inconclusive"]
+    }
+  }
+}
