@@ -1,7 +1,15 @@
 ﻿# Changelog
 
 All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
-and stay synchronized with the core `KINETOVELA` and `KINETOVELA-ee` releases.
+and stay synchronized with the core `KINETOVELA` releases (sharing the same
+git tag).
+
+## 1.0.0 - 2026-08-21
+
+- Synchronize the public SDK version with the core release (first major release:
+  contract freeze exit and M4 completion, KIN-100).
+- Publish binaries for core release 1.0.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
 
 ## 0.55.0 - 2026-08-18
 
