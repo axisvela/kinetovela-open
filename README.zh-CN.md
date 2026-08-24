@@ -15,7 +15,7 @@ KINETOVELA 负责 Fleet 和 Robot 生命周期、Mission 分配、离线执行�
 | 仓库 | 用途 | 许可证 |
 | --- | --- | --- |
 | [`KINETOVELA-open`](https://github.com/axisrobo/kinetovela-open) | 公开合约、SDK、公开示例、公开文档和二进制发布信息 | Apache-2.0 |
-| `KINETOVELA` | 控制平面核心实现（私有） | Apache-2.0 |
+| `KINETOVELA` | 控制平面核心实现（私有） | AGPL-3.0-only |
 | `KINETOVELA-ee` | 企业扩展和内部设计文档 | Enterprise License |
 
 ## API 合约

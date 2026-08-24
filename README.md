@@ -15,7 +15,7 @@ KINETOVELA governs Fleet and Robot lifecycle, Mission assignment, offline execut
 | Repository | Purpose | License |
 | --- | --- | --- |
 | [`KINETOVELA-open`](https://github.com/axisrobo/kinetovela-open) | Public contracts, SDKs, public examples, public docs, and binary release information | Apache-2.0 |
-| `KINETOVELA` | Control-plane core implementation (private) | Apache-2.0 |
+| `KINETOVELA` | Control-plane core implementation (private) | AGPL-3.0-only |
 | `KINETOVELA-ee` | Enterprise extensions and internal design documentation | Enterprise License |
 
 ## API Contracts
