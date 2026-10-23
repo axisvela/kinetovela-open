@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.axisrobo.com/kinetovela-robot-quarantined.payload.v1.schema.json",
+  "$id": "https://schemas.axisvela.com/kinetovela-robot-quarantined.payload.v1.schema.json",
   "title": "KINETOVELA robot.quarantined payload",
   "type": "object",
   "additionalProperties": false,

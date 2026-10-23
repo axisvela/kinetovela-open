@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.axisrobo.com/kinetovela-fleet-updated.payload.v1.schema.json",
+  "$id": "https://schemas.axisvela.com/kinetovela-fleet-updated.payload.v1.schema.json",
   "title": "KINETOVELA fleet.updated payload",
   "type": "object",
   "additionalProperties": false,
