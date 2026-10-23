@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.axisrobo.com/kinetovela-lease-enforced.payload.v1.schema.json",
+  "$id": "https://schemas.axisvela.com/kinetovela-lease-enforced.payload.v1.schema.json",
   "title": "KINETOVELA lease.enforced payload",
   "type": "object",
   "additionalProperties": false,
