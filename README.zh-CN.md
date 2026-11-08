@@ -10,6 +10,8 @@ KINETOVELA-open 是其公开发行版，提供版本化 API 合约、SDK、公�
 
 KINETOVELA 负责 Fleet 和 Robot 生命周期、Mission 分配、离线执行边界、发布操作和效果核对。它与 ROS 2、Open-RMF、VDA 5050、OPC UA、供应商车队、导航栈、驱动程序及认证安全系统集成，而非取代它们。
 
+Mission、分配、fencing 与效果权威仍属于 KINETOVELA，机器人本地安全保持独立。AKROVELA 的目标职责是本地操作、执行尝试与回执，但现有 Site Gateway 尚未迁移。AKROVELA 与 DIDACTOVELA 仅处于未发布的 `0.1.0` 引导阶段，没有功能集成；默认行为与离线授权边界不变。参见[公开架构](docs/architecture.md)、[家族架构](https://github.com/axisvela/axisvela/blob/main/EDGE-AND-LEARNING-ARCHITECTURE.md)与[权威边界](https://github.com/axisvela/axisvela/blob/main/AUTHORITY-BOUNDARIES.md)。
+
 ## 仓库
 
 | 仓库 | 用途 | 许可证 |

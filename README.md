@@ -10,6 +10,14 @@ KINETOVELA-open is its public distribution for versioned API contracts, SDKs, pu
 
 KINETOVELA governs Fleet and Robot lifecycle, Mission assignment, offline execution bounds, release operations, and effect reconciliation. It integrates with rather than replaces ROS 2, Open-RMF, VDA 5050, OPC UA, vendor fleets, navigation stacks, drivers, and certified safety systems.
 
+Mission/assignment/fencing and effect authority stay with KINETOVELA; robot-local
+safety stays independent. AKROVELA targets local operations, execution attempts,
+and receipts, but the existing Site Gateway has not migrated. AKROVELA and
+DIDACTOVELA are unreleased `0.1.0` bootstrap only, with no functional integrations
+or changes to defaults and offline authority bounds. See [public architecture](docs/architecture.md),
+the [family architecture](https://github.com/axisvela/axisvela/blob/main/EDGE-AND-LEARNING-ARCHITECTURE.md),
+and [authority boundaries](https://github.com/axisvela/axisvela/blob/main/AUTHORITY-BOUNDARIES.md).
+
 ## Repositories
 
 | Repository | Purpose | License |
