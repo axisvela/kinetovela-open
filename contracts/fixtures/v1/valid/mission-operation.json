@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "operation_id": "operation:wh3/patrol-17/1",
+  "mission_id": "mission:wh3/patrol-17",
+  "assignment_id": "assignment:wh3/patrol-17/1",
+  "edge_id": "akrovela-node-wh3-01",
+  "fencing_token": 42,
+  "capability_ref": "cap:warehouse.navigate@1.0.0",
+  "delegated_operation": {
+    "schema_version": "akrovela.delegated-operation/v1",
+    "contract_mode": "live",
+    "delegation_id": "delegation:wh3/patrol-17/1",
+    "operation_key": "op:0192f0f2-7d6f-7c2a-9d1e-2b6f0f7a9c31",
+    "operation_type": "ros2.nav2.navigate_to_pose@1",
+    "scope": {"tenant_id": "tenant-acme", "workspace_id": "wh3", "site_id": "site-wh3"},
+    "mission_ref": "mission:wh3/patrol-17",
+    "assignment_ref": "assignment:wh3/patrol-17/1",
+    "lease_ref": "lease:wh3/tb4-01/4",
+    "fencing_token": 42,
+    "authority_ref": "grant:wh3-ops-2026-11",
+    "safety_envelope_ref": "safe:wh3/tb4-01-v1",
+    "approval_ref": "approval:wh3/nav-17/1",
+    "expected_effect": "robot:tb4-01.pose=target-17",
+    "target": {
+      "node_id": "akrovela-node-wh3-01",
+      "node_boot_epoch": 7,
+      "robot_ref": "robot:tb4-01",
+      "adapter": "ros2-nav2",
+      "adapter_version": "0.1.0",
+      "map_ref": "map:wh3/aisle-a@sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "frame_id": "map"
+    },
+    "observation_refs": [],
+    "payload": {
+      "goal": {"x": 12.4, "y": -3.1, "yaw": 1.5708, "frame_id": "map"},
+      "position_tolerance_m": 0.25,
+      "yaw_tolerance_rad": 0.15,
+      "behavior_tree": "navigate_to_pose_w_replanning_and_recovery.xml",
+      "planner_id": "GridBased",
+      "controller_id": "FollowPath"
+    },
+    "validity": {
+      "not_before": "2030-01-01T00:00:00Z",
+      "expires_at": "2030-01-01T00:05:00Z",
+      "clock_domain": "authority-utc",
+      "max_clock_skew_ms": 100,
+      "revalidate_at_release": true
+    },
+    "resource_limits": {
+      "max_duration_ms": 120000,
+      "max_goal_distance_m": 40.0,
+      "max_path_length_m": 60.0,
+      "max_speed_mps": 0.45,
+      "max_attempts": 2,
+      "max_retries": 1,
+      "max_payload_bytes": 16384
+    },
+    "idempotency_retention_seconds": 2592000
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisvela.com/kinetovela-mission-operation.v1.schema.json",
+  "title": "KINETOVELA MissionOperation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "operation_id", "mission_id", "assignment_id", "edge_id", "fencing_token", "capability_ref", "delegated_operation"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "operation_id": { "type": "string", "minLength": 1 },
+    "mission_id": { "type": "string", "minLength": 1 },
+    "assignment_id": { "type": "string", "minLength": 1 },
+    "edge_id": { "type": "string", "minLength": 1 },
+    "fencing_token": { "type": "integer", "minimum": 1 },
+    "capability_ref": { "type": "string", "minLength": 1 },
+    "delegated_operation": { "type": "object" }
+  }
+}

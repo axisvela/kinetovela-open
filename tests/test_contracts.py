@@ -22,6 +22,11 @@ CANONICAL = [
     ("robot/v1/robot-descriptor.schema.json", ["robot-descriptor.json"], []),
     ("safety/v1/safety-envelope.schema.json", ["safety-envelope.json"], ["safety-envelope-invalid-fallback.json"]),
     ("state/v1/robot-state-reference.schema.json", ["robot-state-reference.json"], []),
+    ("mission/v1/mission-operation.schema.json",
+     ["mission-operation.json"],
+     ["mission-operation-missing-assignment.json",
+      "mission-operation-zero-fence.json",
+      "mission-operation-missing-delegated-operation.json"]),
 ]
 
 def load(rel):

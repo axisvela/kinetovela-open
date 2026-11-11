@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "operation_id": "operation:wh3/patrol-17/1",
+  "mission_id": "mission:wh3/patrol-17",
+  "assignment_id": "assignment:wh3/patrol-17/1",
+  "edge_id": "akrovela-node-wh3-01",
+  "fencing_token": 42,
+  "capability_ref": "cap:warehouse.navigate@1.0.0"
+}
