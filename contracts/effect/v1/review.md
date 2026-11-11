@@ -15,7 +15,7 @@ security certification.
 | Maintainer | KINETOVELA maintainers |
 | Review method | Fresh-context review of schema, fixtures and authority boundaries |
 | Core reviewed | `KINETOVELA` commit `545023997bff5f6287a80fe5817c1782e52ae570` |
-| Contracts reviewed | `KINETOVELA-open-contracts` commit `423e1760021853d797e61245648ea3526d170976` |
+| Contracts reviewed | `KINETOVELA-open-contracts` commits `5c67cbcc195c3a481b0180e94f548e3c4955b0f1` (schema) and `423e1760021853d797e61245648ea3526d170976` (OpenAPI) |
 
 ## Ownership
 
@@ -29,8 +29,8 @@ in-repository review is not external sign-off.
 
 | Case | Required outcome | Coverage |
 | --- | --- | --- |
-| Local `verified` relabelled as `observed` | Reject; preserve the local status and provenance rather than promoting or relabelling it | Status and provenance review |
-| `stop_confirmed: true` without a source | Reject; stop confirmation requires a sourced fact | `execution` fields and review |
+| Local `verified` relabelled as `observed` | Reject; preserve the local status and provenance rather than promoting or relabelling it | `effect-report-observed-claim.json`; status/provenance constraint |
+| `stop_confirmed: true` without a source | Reject; stop confirmation requires a sourced fact | Phase 2 server gate; the schema cannot see a source |
 | `mission_completed` field | Reject as an unknown property; a report never completes a Mission | `effect-report-completion-claim.json`; `additionalProperties: false` |
 | Bad status | Reject values outside `reported`, `observed`, `failed`, `unknown_effect` | `effect-report-bad-status.json` |
 | Missing fence | Reject as invalid; a report requires a positive fencing token | `effect-report-missing-fence.json` |
@@ -45,10 +45,13 @@ in-repository review is not external sign-off.
   `node_id`, `boot_epoch`, `fencing_token`, `status`, `observed_at` and
   `provenance`.
 - Provenance is fixed to `akrovela-receipt`; the report cannot claim an
-  independent verifier.
+  independent verifier. With that provenance, `status` is constrained to
+  `reported`, `failed` or `unknown_effect`; an `observed` claim is invalid.
 - `execution` separates effect status, cancellation status and completion from
   Mission completion; `stop_confirmed` is a boolean fact, not a cancel result.
-- `additionalProperties: false` rejects extra fields such as `mission_completed`.
+- Top-level completion fields such as `mission_completed` are rejected by
+  `additionalProperties: false`; `details` is opaque and not interpreted as
+  completion.
 - The report result conveys acceptance and Mission status without asserting
   completion from the report itself.
 

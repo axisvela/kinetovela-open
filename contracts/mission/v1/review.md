@@ -36,10 +36,10 @@ repository is not external sign-off.
 | Duplicate assignment | Reject the second assignment; do not silently replace robot or lease | Mission state gate; stateful test required |
 | Cross-tenant edge assignment | Reject; no cross-tenant read or write | Authority scope binding and review |
 | Unknown Mission | Reject with `404`; do not create an implicit Mission | Mission API response contract |
-| Operation reference mismatch | Reject when path `mission_id`, body `mission_id`, `assignment_id` or `edge_id` disagree | `mission-operation-missing-assignment.json` and review |
+| Operation reference mismatch | Reject when path `mission_id`, body `mission_id`, `assignment_id` or `edge_id` disagree | Phase 2 server gate; `mission-operation-missing-assignment.json` only tests an absent field, not a mismatch |
 | Receipt or effect report presented as Mission completion | Reject; an accepted report never transitions the Mission to `completed` | `effect-report-completion-claim.json`; Mission API response contract |
 | Cancel request presented as remote stop | Reject; cancellation is a request and `stop_confirmed` remains a separate sourced fact | Cancel response contract and review |
-| Remote `$ref` in a schema or the API document | Reject; all references stay in-document | `test_no_remote_schema_refs` |
+| Remote `$ref` in a schema or the API document | Reject; all references stay in-document | `test_no_remote_schema_refs`, `test_mission_api_refs_resolve` |
 
 ## Findings Resolved Before Review
 
@@ -51,8 +51,8 @@ repository is not external sign-off.
   reference and a positive fencing token.
 - The Mission API exposes submit, query, assignment, operation, cancel and
   effect-report paths without claiming execution or remote stop.
-- The OpenAPI components match the canonical schemas in required fields and
-  properties, and every `$ref` resolves locally.
+- The OpenAPI components match the canonical schemas after excluding only schema
+  metadata, and every `$ref` resolves locally.
 - Effect reports never carry a `mission_completed` field and cannot complete a
   Mission.
 

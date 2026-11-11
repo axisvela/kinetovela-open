@@ -17,15 +17,34 @@
     "/missions": {
       "get": {
         "operationId": "listMissions",
+        "parameters": [
+          {
+            "name": "edge_id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1 }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": ["draft", "validated", "assigned", "dispatched", "executing", "paused", "reconciling", "completed", "failed", "cancelled", "unknown_effect", "expired"]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "minimum": 1 }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Missions visible to the caller.",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/MissionView" }
-                }
+                "schema": { "$ref": "#/components/schemas/MissionList" }
               }
             }
           },
@@ -51,7 +70,7 @@
         },
         "responses": {
           "201": {
-            "description": "Mission accepted and stored in draft state.",
+            "description": "Mission accepted and stored in validated state. The 201 view may omit assignment.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/MissionView" }
@@ -128,7 +147,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Mission assignment recorded.",
             "content": {
               "application/json": {
@@ -156,6 +175,35 @@
       }
     },
     "/missions/{mission_id}/operations": {
+      "get": {
+        "operationId": "getMissionOperations",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operations recorded for the mission.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MissionOperationList" }
+              }
+            }
+          },
+          "404": {
+            "description": "Mission not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "operationId": "submitMissionOperation",
         "parameters": [
@@ -347,7 +395,14 @@
           "edge_id": { "type": "string", "minLength": 1 },
           "fencing_token": { "type": "integer", "minimum": 1 },
           "capability_ref": { "type": "string", "minLength": 1 },
-          "delegated_operation": { "type": "object" }
+          "delegated_operation": {
+            "type": "object",
+            "required": ["schema_version", "contract_mode"],
+            "properties": {
+              "schema_version": { "const": "akrovela.delegated-operation/v1" },
+              "contract_mode": { "const": "live" }
+            }
+          }
         }
       },
       "EffectReport": {
@@ -381,11 +436,18 @@
             }
           },
           "details": { "type": "object", "maxProperties": 20 }
+        },
+        "if": {
+          "properties": { "provenance": { "const": "akrovela-receipt" } },
+          "required": ["provenance"]
+        },
+        "then": {
+          "properties": { "status": { "enum": ["reported", "failed", "unknown_effect"] } }
         }
       },
       "MissionView": {
         "type": "object",
-        "required": ["mission", "status", "assignment", "operations", "cancel_requested", "updated_at"],
+        "required": ["mission", "status", "operations", "cancel_requested", "updated_at"],
         "properties": {
           "mission": { "$ref": "#/components/schemas/Mission" },
           "status": {
@@ -398,6 +460,28 @@
           },
           "cancel_requested": { "type": "boolean" },
           "updated_at": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "MissionList": {
+        "type": "object",
+        "required": ["missions"],
+        "properties": {
+          "missions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MissionView" }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MissionOperationList": {
+        "type": "object",
+        "required": ["operations"],
+        "properties": {
+          "operations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MissionOperation" }
+          }
         },
         "additionalProperties": false
       },
@@ -423,11 +507,13 @@
       },
       "EffectReportResult": {
         "type": "object",
+        "description": "Effect report admission result. mission_status is KINETOVELA's reconciliation read-back, not a completion implied by the report.",
         "required": ["accepted", "effect_status", "mission_status"],
         "properties": {
           "accepted": { "type": "boolean" },
           "effect_status": { "type": "string" },
           "mission_status": {
+            "description": "KINETOVELA's reconciliation read-back, not a completion implied by the report.",
             "enum": ["draft", "validated", "assigned", "dispatched", "executing", "paused", "reconciling", "completed", "failed", "cancelled", "unknown_effect", "expired"]
           }
         },

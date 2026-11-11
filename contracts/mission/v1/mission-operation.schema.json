@@ -13,6 +13,13 @@
     "edge_id": { "type": "string", "minLength": 1 },
     "fencing_token": { "type": "integer", "minimum": 1 },
     "capability_ref": { "type": "string", "minLength": 1 },
-    "delegated_operation": { "type": "object" }
+    "delegated_operation": {
+      "type": "object",
+      "required": ["schema_version", "contract_mode"],
+      "properties": {
+        "schema_version": { "const": "akrovela.delegated-operation/v1" },
+        "contract_mode": { "const": "live" }
+      }
+    }
   }
 }

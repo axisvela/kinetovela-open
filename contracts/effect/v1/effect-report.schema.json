@@ -32,5 +32,12 @@
       }
     },
     "details": { "type": "object", "maxProperties": 20 }
+  },
+  "if": {
+    "properties": { "provenance": { "const": "akrovela-receipt" } },
+    "required": ["provenance"]
+  },
+  "then": {
+    "properties": { "status": { "enum": ["reported", "failed", "unknown_effect"] } }
   }
 }

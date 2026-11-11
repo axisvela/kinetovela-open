@@ -1,0 +1,16 @@
+{
+  "mission": {
+    "schema_version": "1.0.0",
+    "mission_id": "mission:wh3/patrol-17",
+    "plan_ref": "plan:wh3/patrol@sha256:abc123",
+    "capability_refs": ["cap:warehouse.navigate@1.0.0"],
+    "authority_ref": "grant:wh3-ops-2026-11",
+    "safety_envelope_ref": "safe:wh3/tb4-01-v1",
+    "expected_effects": ["robot:tb4-01.pose=target-17"],
+    "deadline_at": "2026-11-11T12:00:00Z"
+  },
+  "status": "validated",
+  "operations": [],
+  "cancel_requested": false,
+  "updated_at": "2026-11-11T10:00:00Z"
+}

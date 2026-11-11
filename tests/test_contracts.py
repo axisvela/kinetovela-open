@@ -26,12 +26,14 @@ CANONICAL = [
      ["mission-operation.json"],
      ["mission-operation-missing-assignment.json",
       "mission-operation-zero-fence.json",
-      "mission-operation-missing-delegated-operation.json"]),
+      "mission-operation-missing-delegated-operation.json",
+      "mission-operation-wrong-contract-mode.json"]),
     ("effect/v1/effect-report.schema.json",
      ["effect-report-reported.json", "effect-report-unknown.json"],
      ["effect-report-missing-fence.json",
       "effect-report-bad-status.json",
-      "effect-report-completion-claim.json"]),
+      "effect-report-completion-claim.json",
+      "effect-report-observed-claim.json"]),
 ]
 
 def load(rel):
@@ -111,9 +113,23 @@ class ContractTests(unittest.TestCase):
         self.assertEqual({"get", "post"}, set(spec["paths"]["/missions"]))
         self.assertEqual({"get"}, set(spec["paths"]["/missions/{mission_id}"]))
         self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/assignments"]))
-        self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/operations"]))
+        self.assertEqual({"get", "post"}, set(spec["paths"]["/missions/{mission_id}/operations"]))
         self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/cancel"]))
         self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/effect-reports"]))
+
+        list_params = spec["paths"]["/missions"]["get"].get("parameters", [])
+        self.assertEqual(
+            {"edge_id", "status", "limit"},
+            {p["name"] for p in list_params if p.get("in") == "query"},
+        )
+
+        submit = spec["paths"]["/missions"]["post"]["responses"]["201"]["description"]
+        self.assertIn("validated", submit)
+        self.assertIn("assignment", submit)
+
+        assignment_responses = spec["paths"]["/missions/{mission_id}/assignments"]["post"]["responses"]
+        self.assertIn("201", assignment_responses)
+        self.assertNotIn("200", assignment_responses)
 
     def test_mission_api_refs_resolve(self):
         spec = json.loads((CONTRACTS / "mission/v1/mission-api.openapi.json").read_text(encoding="utf-8"))
@@ -142,10 +158,10 @@ class ContractTests(unittest.TestCase):
         }
         for component, rel in pairs.items():
             with self.subTest(component=component):
-                a = set(spec["components"]["schemas"][component]["required"])
-                b = set(load(rel)["required"])
-                self.assertEqual(b, a)
-                self.assertEqual(load(rel)["properties"].keys(), spec["components"]["schemas"][component]["properties"].keys())
+                standalone = load(rel)
+                for key in ("$schema", "$id", "title"):
+                    standalone.pop(key, None)
+                self.assertEqual(standalone, spec["components"]["schemas"][component])
 
     def test_mission_api_fixtures(self):
         spec = json.loads((CONTRACTS / "mission/v1/mission-api.openapi.json").read_text(encoding="utf-8"))
@@ -156,6 +172,9 @@ class ContractTests(unittest.TestCase):
             return Draft202012Validator(root, format_checker=FormatChecker())
         cases = [
             ("MissionView", "valid/mission-view.json", True),
+            ("MissionView", "valid/mission-view-unassigned.json", True),
+            ("MissionList", "valid/mission-list.json", True),
+            ("MissionOperationList", "valid/mission-operation-list.json", True),
             ("AssignmentRequest", "valid/assignment-request.json", True),
             ("EffectReportResult", "valid/effect-report-result.json", True),
             ("MissionView", "invalid/mission-view-missing-cancel.json", False),
