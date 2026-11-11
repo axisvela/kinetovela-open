@@ -138,7 +138,7 @@ type CancelRequest struct {
 type EffectExecution struct {
 	EffectStatus    string `json:"effect_status,omitempty"`
 	CancelStatus    string `json:"cancel_status,omitempty"`
-	StopConfirmed   bool   `json:"stop_confirmed,omitempty"`
+	StopConfirmed   *bool  `json:"stop_confirmed,omitempty"`
 	ContractMode    string `json:"contract_mode,omitempty"`
 	ExecutionStatus string `json:"execution_status,omitempty"`
 	ReceiptRef      string `json:"receipt_ref,omitempty"`
@@ -326,7 +326,7 @@ func (c *Client) doMissionJSON(ctx context.Context, method, path string, payload
 			Code    string `json:"code"`
 			Message string `json:"message"`
 		}
-		if json.Unmarshal(raw, &apiErr) == nil && apiErr.Code != "" {
+		if json.Unmarshal(raw, &apiErr) == nil && apiErr.Code != "" && apiErr.Message != "" {
 			return &APIError{StatusCode: resp.StatusCode, Code: apiErr.Code, Message: apiErr.Message}
 		}
 		return &HTTPError{StatusCode: resp.StatusCode, Body: string(raw)}

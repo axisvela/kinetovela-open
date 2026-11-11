@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -97,8 +99,11 @@ func TestNewRejectsInvalidConfig(t *testing.T) {
 
 func TestMissionSubmitGetListAssign(t *testing.T) {
 	var requests []string
+	bodies := map[string]string{}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requests = append(requests, r.Method+" "+r.URL.EscapedPath()+"?"+r.URL.RawQuery)
+		raw, _ := io.ReadAll(r.Body)
+		bodies[r.Method+" "+r.URL.Path] = string(raw)
 		w.Header().Set("Content-Type", "application/json")
 		switch {
 		case r.Method == http.MethodPost && r.URL.Path == "/missions":
@@ -150,6 +155,11 @@ func TestMissionSubmitGetListAssign(t *testing.T) {
 			t.Fatalf("request[%d] = %q, want %q", i, requests[i], want[i])
 		}
 	}
+
+	wantSubmitBody := `{"schema_version":"1.0.0","mission_id":"mission:wh3/patrol-17","plan_ref":"plan:wh3/patrol","capability_refs":["cap:warehouse.navigate@1.0.0"],"authority_ref":"grant:wh3-ops","safety_envelope_ref":"safe:wh3","expected_effects":["robot:tb4-01.pose=target-17"]}`
+	if got := bodies["POST /missions"]; got != wantSubmitBody {
+		t.Fatalf("submit body = %q, want %q", got, wantSubmitBody)
+	}
 }
 
 func TestMissionErrorMapping(t *testing.T) {
@@ -167,6 +177,62 @@ func TestMissionErrorMapping(t *testing.T) {
 	}
 	if apiErr.StatusCode != http.StatusConflict || apiErr.Code != "stale_fence" || apiErr.Message != "fence is stale" {
 		t.Fatalf("apiErr = %+v", apiErr)
+	}
+}
+
+func TestMissionErrorIncompleteFallsBackToHTTPError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{"code": "x"})
+	}))
+	defer srv.Close()
+	c, _ := New(Config{BaseURL: srv.URL})
+	_, err := c.GetMission(context.Background(), "mission:wh3/patrol-17")
+	var apiErr *APIError
+	if errors.As(err, &apiErr) {
+		t.Fatalf("err = %v, want HTTPError fallback", err)
+	}
+	var httpErr *HTTPError
+	if !errors.As(err, &httpErr) {
+		t.Fatalf("err = %v, want HTTPError", err)
+	}
+	if httpErr.StatusCode != http.StatusBadRequest {
+		t.Fatalf("httpErr = %+v", httpErr)
+	}
+}
+
+func TestEffectExecutionStopConfirmedPointer(t *testing.T) {
+	stop := false
+	report := EffectReport{
+		SchemaVersion: "1.0.0",
+		ReportID:      "report-1",
+		MissionID:     "mission:wh3/patrol-17",
+		AssignmentID:  "assignment-1",
+		OperationKey:  "operation-1",
+		AttemptID:     "attempt-1",
+		NodeID:        "node-1",
+		BootEpoch:     1,
+		FencingToken:  1,
+		Status:        "observed",
+		Provenance:    "akrovela-receipt",
+		Execution:     &EffectExecution{StopConfirmed: &stop},
+	}
+	raw, err := json.Marshal(report)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(raw), `"stop_confirmed":false`) {
+		t.Fatalf("body = %s, want explicit stop_confirmed:false", raw)
+	}
+
+	report.Execution = &EffectExecution{}
+	raw, err = json.Marshal(report)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(raw), "stop_confirmed") {
+		t.Fatalf("body = %s, want stop_confirmed omitted", raw)
 	}
 }
 
