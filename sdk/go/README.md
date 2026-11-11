@@ -46,11 +46,14 @@ view, err = c.AssignMission(ctx, mission.Mission.MissionID, sdk.AssignmentReques
 })
 
 view, err = c.SubmitMissionOperation(ctx, mission.Mission.MissionID, sdk.MissionOperation{
-	SchemaVersion: "1.0.0",
-	OperationID:   "op-1",
-	MissionID:     mission.Mission.MissionID,
-	EdgeID:        "edge-1",
-	FencingToken:  42,
+	SchemaVersion:      "1.0.0",
+	OperationID:        "operation:wh3/patrol-17/1",
+	MissionID:          mission.Mission.MissionID,
+	AssignmentID:       "assignment:wh3/patrol-17/1",
+	EdgeID:             "edge-1",
+	FencingToken:       42,
+	CapabilityRef:      "cap:warehouse.navigate@1.0.0",
+	DelegatedOperation: json.RawMessage(`{"schema_version":"akrovela.delegated-operation/v1","contract_mode":"live"}`),
 })
 operations, err := c.GetMissionOperations(ctx, mission.Mission.MissionID)
 
@@ -66,7 +69,7 @@ result, err := c.ReportEffect(ctx, mission.Mission.MissionID, sdk.EffectReport{
 	NodeID:        "node-1",
 	BootEpoch:     1,
 	FencingToken:  42,
-	Status:        "observed",
+	Status:        "reported",
 	ObservedAt:    time.Now().UTC(),
 	Provenance:    "akrovela-receipt",
 })
@@ -84,7 +87,7 @@ Mission IDs may contain reserved characters such as `/`. The SDK URL-encodes
 the mission ID on every mission path (for example `mission:wh3/patrol-17`
 becomes `mission:wh3%2Fpatrol-17`); callers pass the raw ID.
 
-Mission and edge read methods map structured error responses to `*sdk.APIError`.
+Mission methods and `GetEdge` map structured error responses to `*sdk.APIError`.
 The type carries `StatusCode`, `Code` and `Message` and is returned when the
 error body includes both a code and a message; otherwise the SDK falls back to
 `*sdk.HTTPError`. The older edge-fleet methods continue to return `*sdk.HTTPError`.

@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestPublicEndpoints(t *testing.T) {
@@ -160,6 +161,11 @@ func TestMissionSubmitGetListAssign(t *testing.T) {
 	if got := bodies["POST /missions"]; got != wantSubmitBody {
 		t.Fatalf("submit body = %q, want %q", got, wantSubmitBody)
 	}
+
+	wantAssignBody := `{"edge_id":"edge-1","robot_ref":"robot:tb4-01","lease_ref":"lease:wh3/tb4-01/4","fencing_token":42,"assignment_reason":"nearest"}`
+	if got := bodies["POST /missions/mission:wh3/patrol-17/assignments"]; got != wantAssignBody {
+		t.Fatalf("assign body = %q, want %q", got, wantAssignBody)
+	}
 }
 
 func TestMissionOperationCalls(t *testing.T) {
@@ -173,15 +179,15 @@ func TestMissionOperationCalls(t *testing.T) {
 		switch {
 		case r.Method == http.MethodPost && r.URL.Path == "/missions/mission:wh3/patrol-17/operations":
 			w.WriteHeader(http.StatusCreated)
-			_ = json.NewEncoder(w).Encode(MissionView{Status: "in_progress"})
+			_ = json.NewEncoder(w).Encode(MissionView{Status: "executing"})
 		case r.Method == http.MethodGet && r.URL.Path == "/missions/mission:wh3/patrol-17/operations":
 			_ = json.NewEncoder(w).Encode(MissionOperationList{Operations: []MissionOperation{{OperationID: "op-1"}}})
 		case r.Method == http.MethodPost && r.URL.Path == "/missions/mission:wh3/patrol-17/cancel":
-			_ = json.NewEncoder(w).Encode(MissionView{Status: "cancel_requested", CancelRequested: true})
+			_ = json.NewEncoder(w).Encode(MissionView{Status: "cancelled", CancelRequested: true})
 		case r.Method == http.MethodPost && r.URL.Path == "/missions/mission:wh3/patrol-17/effect-reports":
 			_ = json.NewEncoder(w).Encode(EffectReportResult{Accepted: true, EffectStatus: "observed", MissionStatus: "completed"})
 		case r.Method == http.MethodGet && r.URL.Path == "/edges/edge-1":
-			_ = json.NewEncoder(w).Encode(Edge{ID: "edge-1", TenantID: "tenant-1", Version: "1.0.0", Endpoint: "wss://edge-1"})
+			_ = json.NewEncoder(w).Encode(Edge{ID: "edge-1", TenantID: "tenant-1", Version: "1.0.0", Endpoint: "wss://edge-1", RegisteredAt: time.Date(2026, 11, 11, 10, 0, 0, 0, time.UTC)})
 		default:
 			http.NotFound(w, r)
 		}
@@ -195,8 +201,18 @@ func TestMissionOperationCalls(t *testing.T) {
 	ctx := context.Background()
 	missionID := "mission:wh3/patrol-17"
 
-	view, err := c.SubmitMissionOperation(ctx, missionID, MissionOperation{SchemaVersion: "1.0.0", OperationID: "op-1"})
-	if err != nil || view.Status != "in_progress" {
+	operation := MissionOperation{
+		SchemaVersion:      "1.0.0",
+		OperationID:        "operation:wh3/patrol-17/1",
+		MissionID:          missionID,
+		AssignmentID:       "assignment:wh3/patrol-17/1",
+		EdgeID:             "akrovela-node-wh3-01",
+		FencingToken:       42,
+		CapabilityRef:      "cap:warehouse.navigate@1.0.0",
+		DelegatedOperation: json.RawMessage(`{"schema_version":"akrovela.delegated-operation/v1","contract_mode":"live"}`),
+	}
+	view, err := c.SubmitMissionOperation(ctx, missionID, operation)
+	if err != nil || view.Status != "executing" {
 		t.Fatalf("submit operation = %+v, err = %v", view, err)
 	}
 	ops, err := c.GetMissionOperations(ctx, missionID)
@@ -207,12 +223,12 @@ func TestMissionOperationCalls(t *testing.T) {
 	if err != nil || !cancelled.CancelRequested {
 		t.Fatalf("cancel = %+v, err = %v", cancelled, err)
 	}
-	result, err := c.ReportEffect(ctx, missionID, EffectReport{SchemaVersion: "1.0.0", ReportID: "report-1", MissionID: missionID, Status: "observed", Provenance: "akrovela-receipt"})
+	result, err := c.ReportEffect(ctx, missionID, EffectReport{SchemaVersion: "1.0.0", ReportID: "report-1", MissionID: missionID, Status: "reported", Provenance: "akrovela-receipt"})
 	if err != nil || !result.Accepted || result.EffectStatus != "observed" || result.MissionStatus != "completed" {
 		t.Fatalf("effect report = %+v, err = %v", result, err)
 	}
 	edge, err := c.GetEdge(ctx, "edge-1")
-	if err != nil || edge.ID != "edge-1" || edge.TenantID != "tenant-1" {
+	if err != nil || edge.ID != "edge-1" || edge.TenantID != "tenant-1" || !edge.RegisteredAt.Equal(time.Date(2026, 11, 11, 10, 0, 0, 0, time.UTC)) {
 		t.Fatalf("edge = %+v, err = %v", edge, err)
 	}
 
@@ -240,8 +256,16 @@ func TestMissionOperationCalls(t *testing.T) {
 	if got := bodies["POST /missions/mission:wh3/patrol-17/cancel"]; !strings.Contains(got, `"reason":"reason"`) {
 		t.Fatalf("cancel body = %q, want reason", got)
 	}
-	if got := bodies["POST /missions/mission:wh3/patrol-17/effect-reports"]; !strings.Contains(got, `"report_id":"report-1"`) {
-		t.Fatalf("effect report body = %q", got)
+	wantOperationBody := `{"schema_version":"1.0.0","operation_id":"operation:wh3/patrol-17/1","mission_id":"mission:wh3/patrol-17","assignment_id":"assignment:wh3/patrol-17/1","edge_id":"akrovela-node-wh3-01","fencing_token":42,"capability_ref":"cap:warehouse.navigate@1.0.0","delegated_operation":{"schema_version":"akrovela.delegated-operation/v1","contract_mode":"live"}}`
+	if got := bodies["POST /missions/mission:wh3/patrol-17/operations"]; got != wantOperationBody {
+		t.Fatalf("submit operation body = %q, want %q", got, wantOperationBody)
+	}
+	effectBody := bodies["POST /missions/mission:wh3/patrol-17/effect-reports"]
+	if !strings.Contains(effectBody, `"report_id":"report-1"`) {
+		t.Fatalf("effect report body = %q", effectBody)
+	}
+	if !strings.Contains(effectBody, `"status":"reported"`) || !strings.Contains(effectBody, `"provenance":"akrovela-receipt"`) {
+		t.Fatalf("effect report body = %q, want reported akrovela-receipt", effectBody)
 	}
 }
 
@@ -297,7 +321,7 @@ func TestEffectExecutionStopConfirmedPointer(t *testing.T) {
 		NodeID:        "node-1",
 		BootEpoch:     1,
 		FencingToken:  1,
-		Status:        "observed",
+		Status:        "reported",
 		Provenance:    "akrovela-receipt",
 		Execution:     &EffectExecution{StopConfirmed: &stop},
 	}
@@ -334,6 +358,27 @@ func TestEdgeReadErrorMapsAPIError(t *testing.T) {
 	}
 	if apiErr.StatusCode != http.StatusNotFound || apiErr.Code != "edge_not_found" {
 		t.Fatalf("apiErr = %+v", apiErr)
+	}
+}
+
+func TestGetEdgeEscapesSlash(t *testing.T) {
+	var path string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path = r.Method + " " + r.URL.EscapedPath()
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(Edge{ID: "edge:wh3/01", TenantID: "tenant-1"})
+	}))
+	defer srv.Close()
+
+	c, err := New(Config{BaseURL: srv.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := c.GetEdge(context.Background(), "edge:wh3/01"); err != nil {
+		t.Fatal(err)
+	}
+	if path != "GET /edges/edge:wh3%2F01" {
+		t.Fatalf("path = %q, want encoded slash %%2F", path)
 	}
 }
 

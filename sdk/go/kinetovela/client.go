@@ -54,7 +54,7 @@ type Edge struct {
 	TenantID        string            `json:"tenant_id"`
 	Version         string            `json:"version"`
 	Endpoint        string            `json:"endpoint"`
-	RegisteredAt    *time.Time        `json:"registered_at"`
+	RegisteredAt    time.Time         `json:"registered_at"`
 	LastHeartbeatAt *time.Time        `json:"last_heartbeat_at"`
 	Lag             int64             `json:"lag"`
 	Missions        map[string]string `json:"missions"`
