@@ -1,0 +1,72 @@
+# Contract Review — Governed Mission v1
+
+**Status:** reviewed for integration, 2026-11-11. This is an in-repository
+negative-case review, not external customer sign-off, runtime conformance or
+security certification.
+
+## Identity
+
+| Item | Value |
+| --- | --- |
+| Contract | `contracts/mission/v1/mission.schema.json`, `contracts/mission/v1/mission-assignment.schema.json`, `contracts/mission/v1/mission-operation.schema.json`, `contracts/mission/v1/mission-api.openapi.json` |
+| Contract line | `v1` |
+| Product version | `1.0.0` |
+| Consumer | KINETOVELA core and AKROVELA live delegation |
+| Maintainer | KINETOVELA maintainers |
+| Review method | Fresh-context review of contracts, schemas, fixtures and authority boundaries |
+| Core reviewed | `KINETOVELA` commit `545023997bff5f6287a80fe5817c1782e52ae570` |
+| Contracts reviewed | `KINETOVELA-open-contracts` commit `423e1760021853d797e61245648ea3526d170976` |
+
+## Ownership
+
+KINETOVELA owns Mission intent, assignment, lease fencing and physical effect
+authority. AKROVELA owns local operation admission, attempts, execution facts,
+cancellation facts and receipts. The Mission API records delegated operations and
+effect reports; it does not execute operations or certify physical effects. No
+component may substitute its fact for another's authority, and acceptance in this
+repository is not external sign-off.
+
+## Negative and Fault Cases
+
+| Case | Required outcome | Coverage |
+| --- | --- | --- |
+| Missing authority reference | Reject as invalid; no Mission accepted | `mission-missing-authority.json` |
+| Zero fencing token | Reject as invalid at assignment and operation submission | `mission-assignment-zero-fence.json`, `mission-operation-zero-fence.json`, `assignment-request-zero-fence.json` |
+| Stale fencing token | Reject with a conflict; no later operation or effect accepted | Schema minimum and server gate; stateful test required |
+| Duplicate assignment | Reject the second assignment; do not silently replace robot or lease | Mission state gate; stateful test required |
+| Cross-tenant edge assignment | Reject; no cross-tenant read or write | Authority scope binding and review |
+| Unknown Mission | Reject with `404`; do not create an implicit Mission | Mission API response contract |
+| Operation reference mismatch | Reject when path `mission_id`, body `mission_id`, `assignment_id` or `edge_id` disagree | `mission-operation-missing-assignment.json` and review |
+| Receipt or effect report presented as Mission completion | Reject; an accepted report never transitions the Mission to `completed` | `effect-report-completion-claim.json`; Mission API response contract |
+| Cancel request presented as remote stop | Reject; cancellation is a request and `stop_confirmed` remains a separate sourced fact | Cancel response contract and review |
+| Remote `$ref` in a schema or the API document | Reject; all references stay in-document | `test_no_remote_schema_refs` |
+
+## Findings Resolved Before Review
+
+- Mission intent, assignment, delegated operation and effect report remain
+  separate objects; none implies completion of another.
+- Assignment carries a positive fencing token and a lease reference; zero fences
+  are invalid.
+- Mission operations bind `mission_id`, `assignment_id`, `edge_id`, a capability
+  reference and a positive fencing token.
+- The Mission API exposes submit, query, assignment, operation, cancel and
+  effect-report paths without claiming execution or remote stop.
+- The OpenAPI components match the canonical schemas in required fields and
+  properties, and every `$ref` resolves locally.
+- Effect reports never carry a `mission_completed` field and cannot complete a
+  Mission.
+
+## Residual Risks
+
+| Risk | Effect | Next gate |
+| --- | --- | --- |
+| No external consumer sign-off | Contract may not match consumer needs | Consumer review before live integration |
+| No runtime Mission service implementation | Contract is not runtime evidence | Live delegation gate |
+| Stateful assignment, fencing and replay tests are not executed | Conflict behavior is specified but not proven | Deterministic integration gate |
+| No security certification | Review is not security evidence | Independent security review |
+
+## Decision
+
+Publish `v1` as a reviewed integration contract. Keep live execution, remote
+stop claims and hardware effect claims blocked until their owning gates produce
+evidence.

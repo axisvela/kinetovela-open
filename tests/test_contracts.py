@@ -165,3 +165,11 @@ class ContractTests(unittest.TestCase):
             with self.subTest(fixture=fixture):
                 errors = list(v(component).iter_errors(load(f"fixtures/v1/{fixture}")))
                 self.assertEqual(accepted, not errors, errors)
+
+    def test_review_records_exist(self):
+        for rel in ["mission/v1/review.md", "effect/v1/review.md"]:
+            with self.subTest(review=rel):
+                text = (CONTRACTS / rel).read_text(encoding="utf-8")
+                self.assertIn("## Negative and Fault Cases", text)
+                self.assertIn("## Ownership", text)
+                self.assertIn("not external", text.lower())

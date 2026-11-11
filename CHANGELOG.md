@@ -8,6 +8,14 @@ git tag).
 
 - Add the Go SDK client: health, version, fleet SLO, edge registration,
   heartbeat, mission bind/unbind, and sync reporting.
+- Publish the synced Mission, assignment, preflight, safety, lease, capability,
+  compatibility, evidence, fleet, robot and state schemas with their fixtures.
+- Add the `MissionOperation` and `EffectReport` contracts with valid and invalid
+  fixtures.
+- Publish the `v1` Mission API OpenAPI document for submit, query, assignment,
+  operation, cancel and effect-report paths.
+- Add the Mission and EffectReport review records that name the negative and fault
+  cases and the exact commits reviewed.
 
 ## 1.0.0 - 2026-08-21
 
