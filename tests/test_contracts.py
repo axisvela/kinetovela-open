@@ -27,6 +27,11 @@ CANONICAL = [
      ["mission-operation-missing-assignment.json",
       "mission-operation-zero-fence.json",
       "mission-operation-missing-delegated-operation.json"]),
+    ("effect/v1/effect-report.schema.json",
+     ["effect-report-reported.json", "effect-report-unknown.json"],
+     ["effect-report-missing-fence.json",
+      "effect-report-bad-status.json",
+      "effect-report-completion-claim.json"]),
 ]
 
 def load(rel):

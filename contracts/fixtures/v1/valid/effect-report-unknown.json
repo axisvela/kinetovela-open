@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "report_id": "report:wh3/patrol-17/1/1",
+  "mission_id": "mission:wh3/patrol-17",
+  "assignment_id": "assignment:wh3/patrol-17/1",
+  "operation_key": "op:0192f0f2-7d6f-7c2a-9d1e-2b6f0f7a9c31",
+  "attempt_id": "attempt:wh3/patrol-17/1/1",
+  "node_id": "akrovela-node-wh3-01",
+  "boot_epoch": 7,
+  "fencing_token": 42,
+  "status": "unknown_effect",
+  "observed_at": "2026-11-11T10:00:05Z",
+  "evidence_ref": "receipt:wh3/patrol-17/1/1",
+  "provenance": "akrovela-receipt",
+  "execution": {
+    "effect_status": "unknown",
+    "cancel_status": "unknown",
+    "stop_confirmed": false,
+    "contract_mode": "live",
+    "execution_status": "unknown",
+    "receipt_ref": "receipt:wh3/patrol-17/1/1"
+  }
+}

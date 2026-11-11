@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.axisvela.com/kinetovela-effect-report.v1.schema.json",
+  "title": "KINETOVELA EffectReport v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report_id", "mission_id", "assignment_id", "operation_key", "attempt_id", "node_id", "boot_epoch", "fencing_token", "status", "observed_at", "provenance"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "report_id": { "type": "string", "minLength": 1 },
+    "mission_id": { "type": "string", "minLength": 1 },
+    "assignment_id": { "type": "string", "minLength": 1 },
+    "operation_key": { "type": "string", "minLength": 1 },
+    "attempt_id": { "type": "string", "minLength": 1 },
+    "node_id": { "type": "string", "minLength": 1 },
+    "boot_epoch": { "type": "integer", "minimum": 1 },
+    "fencing_token": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["reported", "observed", "failed", "unknown_effect"] },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "evidence_ref": { "type": "string", "minLength": 1 },
+    "provenance": { "const": "akrovela-receipt" },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "effect_status": { "enum": ["not_evaluated", "verified", "rejected", "unknown"] },
+        "cancel_status": { "enum": ["requested", "stop_confirmed", "unknown"] },
+        "stop_confirmed": { "type": "boolean" },
+        "contract_mode": { "const": "live" },
+        "execution_status": { "enum": ["accepted", "started", "completed", "failed", "unknown"] },
+        "receipt_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "details": { "type": "object", "maxProperties": 20 }
+  }
+}
