@@ -1,4 +1,4 @@
-﻿// Package kinetovela is the public Go client for the KINETOVELA API.
+// Package kinetovela is the public Go client for the KINETOVELA API.
 package kinetovela
 
 import (
@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -55,6 +56,122 @@ type HTTPError struct {
 
 func (e *HTTPError) Error() string {
 	return "kinetovela: unexpected status " + http.StatusText(e.StatusCode)
+}
+
+type APIError struct {
+	StatusCode int
+	Code       string
+	Message    string
+}
+
+func (e *APIError) Error() string {
+	if e.Code != "" {
+		return e.Code + ": " + e.Message
+	}
+	if e.Message != "" {
+		return e.Message
+	}
+	return "kinetovela: unexpected status " + http.StatusText(e.StatusCode)
+}
+
+type Mission struct {
+	SchemaVersion     string     `json:"schema_version"`
+	MissionID         string     `json:"mission_id"`
+	PlanRef           string     `json:"plan_ref"`
+	CapabilityRefs    []string   `json:"capability_refs"`
+	AuthorityRef      string     `json:"authority_ref"`
+	SafetyEnvelopeRef string     `json:"safety_envelope_ref"`
+	ExpectedEffects   []string   `json:"expected_effects"`
+	DeadlineAt        *time.Time `json:"deadline_at,omitempty"`
+}
+
+type MissionAssignment struct {
+	SchemaVersion    string `json:"schema_version"`
+	AssignmentID     string `json:"assignment_id"`
+	MissionRef       string `json:"mission_ref"`
+	RobotRef         string `json:"robot_ref"`
+	LeaseRef         string `json:"lease_ref"`
+	FencingToken     int64  `json:"fencing_token"`
+	AssignmentReason string `json:"assignment_reason"`
+}
+
+type MissionOperation struct {
+	SchemaVersion      string          `json:"schema_version"`
+	OperationID        string          `json:"operation_id"`
+	MissionID          string          `json:"mission_id"`
+	AssignmentID       string          `json:"assignment_id"`
+	EdgeID             string          `json:"edge_id"`
+	FencingToken       int64           `json:"fencing_token"`
+	CapabilityRef      string          `json:"capability_ref"`
+	DelegatedOperation json.RawMessage `json:"delegated_operation"`
+}
+
+type MissionView struct {
+	Mission         Mission            `json:"mission"`
+	Status          string             `json:"status"`
+	Assignment      *MissionAssignment `json:"assignment,omitempty"`
+	Operations      []MissionOperation `json:"operations"`
+	CancelRequested bool               `json:"cancel_requested"`
+	UpdatedAt       time.Time          `json:"updated_at"`
+}
+
+type MissionList struct {
+	Missions []MissionView `json:"missions"`
+}
+
+type MissionOperationList struct {
+	Operations []MissionOperation `json:"operations"`
+}
+
+type AssignmentRequest struct {
+	EdgeID           string `json:"edge_id"`
+	RobotRef         string `json:"robot_ref"`
+	LeaseRef         string `json:"lease_ref"`
+	FencingToken     int64  `json:"fencing_token"`
+	AssignmentReason string `json:"assignment_reason"`
+}
+
+type CancelRequest struct {
+	Reason string `json:"reason"`
+}
+
+type EffectExecution struct {
+	EffectStatus    string `json:"effect_status,omitempty"`
+	CancelStatus    string `json:"cancel_status,omitempty"`
+	StopConfirmed   bool   `json:"stop_confirmed,omitempty"`
+	ContractMode    string `json:"contract_mode,omitempty"`
+	ExecutionStatus string `json:"execution_status,omitempty"`
+	ReceiptRef      string `json:"receipt_ref,omitempty"`
+}
+
+type EffectReport struct {
+	SchemaVersion string           `json:"schema_version"`
+	ReportID      string           `json:"report_id"`
+	MissionID     string           `json:"mission_id"`
+	AssignmentID  string           `json:"assignment_id"`
+	OperationKey  string           `json:"operation_key"`
+	AttemptID     string           `json:"attempt_id"`
+	NodeID        string           `json:"node_id"`
+	BootEpoch     int64            `json:"boot_epoch"`
+	FencingToken  int64            `json:"fencing_token"`
+	Status        string           `json:"status"`
+	ObservedAt    time.Time        `json:"observed_at"`
+	EvidenceRef   string           `json:"evidence_ref,omitempty"`
+	Provenance    string           `json:"provenance"`
+	Execution     *EffectExecution `json:"execution,omitempty"`
+	Details       map[string]any   `json:"details,omitempty"`
+}
+
+type EffectReportResult struct {
+	Accepted      bool   `json:"accepted"`
+	EffectStatus  string `json:"effect_status"`
+	MissionStatus string `json:"mission_status"`
+}
+
+type MissionFilter struct {
+	EdgeID string
+	Status string
+	Limit  int
 }
 
 func New(cfg Config) (*Client, error) {
@@ -118,6 +235,106 @@ func (c *Client) ReportSync(ctx context.Context, edgeID string, pending int, las
 	return c.do(ctx, http.MethodPost, "/edges/"+url.PathEscape(edgeID)+"/sync",
 		map[string]any{"pending": pending, "last_event_seq": lastEventSeq},
 		http.StatusOK, http.StatusNoContent)
+}
+
+func (c *Client) SubmitMission(ctx context.Context, mission Mission) (*MissionView, error) {
+	var out MissionView
+	if err := c.doMissionJSON(ctx, http.MethodPost, "/missions", mission, &out, http.StatusCreated); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *Client) GetMission(ctx context.Context, missionID string) (*MissionView, error) {
+	var out MissionView
+	if err := c.doMissionJSON(ctx, http.MethodGet, "/missions/"+url.PathEscape(missionID), nil, &out, http.StatusOK); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *Client) ListMissions(ctx context.Context, filter MissionFilter) ([]MissionView, error) {
+	query := url.Values{}
+	if filter.EdgeID != "" {
+		query.Set("edge_id", filter.EdgeID)
+	}
+	if filter.Status != "" {
+		query.Set("status", filter.Status)
+	}
+	if filter.Limit > 0 {
+		query.Set("limit", strconv.Itoa(filter.Limit))
+	}
+	path := "/missions"
+	if encoded := query.Encode(); encoded != "" {
+		path += "?" + encoded
+	}
+	var out MissionList
+	if err := c.doMissionJSON(ctx, http.MethodGet, path, nil, &out, http.StatusOK); err != nil {
+		return nil, err
+	}
+	return out.Missions, nil
+}
+
+func (c *Client) AssignMission(ctx context.Context, missionID string, request AssignmentRequest) (*MissionView, error) {
+	var out MissionView
+	path := "/missions/" + url.PathEscape(missionID) + "/assignments"
+	if err := c.doMissionJSON(ctx, http.MethodPost, path, request, &out, http.StatusCreated); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *Client) doMissionJSON(ctx context.Context, method, path string, payload, out any, okStatuses ...int) error {
+	var body io.Reader
+	if payload != nil {
+		raw, err := json.Marshal(payload)
+		if err != nil {
+			return err
+		}
+		body = bytes.NewReader(raw)
+	}
+	req, err := http.NewRequestWithContext(ctx, method, c.base+path, body)
+	if err != nil {
+		return err
+	}
+	if payload != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	if c.token != "" {
+		req.Header.Set("Authorization", "Bearer "+c.token)
+	}
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	ok := false
+	if len(okStatuses) == 0 {
+		ok = resp.StatusCode >= 200 && resp.StatusCode < 300
+	} else {
+		for _, status := range okStatuses {
+			if resp.StatusCode == status {
+				ok = true
+				break
+			}
+		}
+	}
+	if !ok {
+		raw, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+		var apiErr struct {
+			Code    string `json:"code"`
+			Message string `json:"message"`
+		}
+		if json.Unmarshal(raw, &apiErr) == nil && apiErr.Code != "" {
+			return &APIError{StatusCode: resp.StatusCode, Code: apiErr.Code, Message: apiErr.Message}
+		}
+		return &HTTPError{StatusCode: resp.StatusCode, Body: string(raw)}
+	}
+	if out != nil {
+		return json.NewDecoder(resp.Body).Decode(out)
+	}
+	return nil
 }
 
 func (c *Client) doJSON(ctx context.Context, method, path string, payload, out any) error {
