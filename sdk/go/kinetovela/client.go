@@ -49,6 +49,20 @@ type EdgeRegistration struct {
 	Endpoint string `json:"endpoint,omitempty"`
 }
 
+type Edge struct {
+	ID              string            `json:"id"`
+	TenantID        string            `json:"tenant_id"`
+	Version         string            `json:"version"`
+	Endpoint        string            `json:"endpoint"`
+	RegisteredAt    *time.Time        `json:"registered_at"`
+	LastHeartbeatAt *time.Time        `json:"last_heartbeat_at"`
+	Lag             int64             `json:"lag"`
+	Missions        map[string]string `json:"missions"`
+	SyncPending     int               `json:"sync_pending"`
+	LastEventSeq    int64             `json:"last_event_seq"`
+	SyncedAt        *time.Time        `json:"synced_at"`
+}
+
 type HTTPError struct {
 	StatusCode int
 	Body       string
@@ -279,6 +293,50 @@ func (c *Client) AssignMission(ctx context.Context, missionID string, request As
 	var out MissionView
 	path := "/missions/" + url.PathEscape(missionID) + "/assignments"
 	if err := c.doMissionJSON(ctx, http.MethodPost, path, request, &out, http.StatusCreated); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *Client) SubmitMissionOperation(ctx context.Context, missionID string, operation MissionOperation) (*MissionView, error) {
+	var out MissionView
+	path := "/missions/" + url.PathEscape(missionID) + "/operations"
+	if err := c.doMissionJSON(ctx, http.MethodPost, path, operation, &out, http.StatusCreated); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *Client) GetMissionOperations(ctx context.Context, missionID string) ([]MissionOperation, error) {
+	var out MissionOperationList
+	path := "/missions/" + url.PathEscape(missionID) + "/operations"
+	if err := c.doMissionJSON(ctx, http.MethodGet, path, nil, &out, http.StatusOK); err != nil {
+		return nil, err
+	}
+	return out.Operations, nil
+}
+
+func (c *Client) CancelMission(ctx context.Context, missionID, reason string) (*MissionView, error) {
+	var out MissionView
+	path := "/missions/" + url.PathEscape(missionID) + "/cancel"
+	if err := c.doMissionJSON(ctx, http.MethodPost, path, CancelRequest{Reason: reason}, &out, http.StatusOK); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *Client) ReportEffect(ctx context.Context, missionID string, report EffectReport) (*EffectReportResult, error) {
+	var out EffectReportResult
+	path := "/missions/" + url.PathEscape(missionID) + "/effect-reports"
+	if err := c.doMissionJSON(ctx, http.MethodPost, path, report, &out, http.StatusOK); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *Client) GetEdge(ctx context.Context, edgeID string) (*Edge, error) {
+	var out Edge
+	if err := c.doMissionJSON(ctx, http.MethodGet, "/edges/"+url.PathEscape(edgeID), nil, &out, http.StatusOK); err != nil {
 		return nil, err
 	}
 	return &out, nil

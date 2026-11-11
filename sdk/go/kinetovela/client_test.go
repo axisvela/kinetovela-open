@@ -162,6 +162,89 @@ func TestMissionSubmitGetListAssign(t *testing.T) {
 	}
 }
 
+func TestMissionOperationCalls(t *testing.T) {
+	var requests []string
+	bodies := map[string]string{}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests = append(requests, r.Method+" "+r.URL.EscapedPath()+"?"+r.URL.RawQuery)
+		raw, _ := io.ReadAll(r.Body)
+		bodies[r.Method+" "+r.URL.Path] = string(raw)
+		w.Header().Set("Content-Type", "application/json")
+		switch {
+		case r.Method == http.MethodPost && r.URL.Path == "/missions/mission:wh3/patrol-17/operations":
+			w.WriteHeader(http.StatusCreated)
+			_ = json.NewEncoder(w).Encode(MissionView{Status: "in_progress"})
+		case r.Method == http.MethodGet && r.URL.Path == "/missions/mission:wh3/patrol-17/operations":
+			_ = json.NewEncoder(w).Encode(MissionOperationList{Operations: []MissionOperation{{OperationID: "op-1"}}})
+		case r.Method == http.MethodPost && r.URL.Path == "/missions/mission:wh3/patrol-17/cancel":
+			_ = json.NewEncoder(w).Encode(MissionView{Status: "cancel_requested", CancelRequested: true})
+		case r.Method == http.MethodPost && r.URL.Path == "/missions/mission:wh3/patrol-17/effect-reports":
+			_ = json.NewEncoder(w).Encode(EffectReportResult{Accepted: true, EffectStatus: "observed", MissionStatus: "completed"})
+		case r.Method == http.MethodGet && r.URL.Path == "/edges/edge-1":
+			_ = json.NewEncoder(w).Encode(Edge{ID: "edge-1", TenantID: "tenant-1", Version: "1.0.0", Endpoint: "wss://edge-1"})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer srv.Close()
+
+	c, err := New(Config{BaseURL: srv.URL, Token: "tok"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx := context.Background()
+	missionID := "mission:wh3/patrol-17"
+
+	view, err := c.SubmitMissionOperation(ctx, missionID, MissionOperation{SchemaVersion: "1.0.0", OperationID: "op-1"})
+	if err != nil || view.Status != "in_progress" {
+		t.Fatalf("submit operation = %+v, err = %v", view, err)
+	}
+	ops, err := c.GetMissionOperations(ctx, missionID)
+	if err != nil || len(ops) != 1 || ops[0].OperationID != "op-1" {
+		t.Fatalf("operations = %+v, err = %v", ops, err)
+	}
+	cancelled, err := c.CancelMission(ctx, missionID, "reason")
+	if err != nil || !cancelled.CancelRequested {
+		t.Fatalf("cancel = %+v, err = %v", cancelled, err)
+	}
+	result, err := c.ReportEffect(ctx, missionID, EffectReport{SchemaVersion: "1.0.0", ReportID: "report-1", MissionID: missionID, Status: "observed", Provenance: "akrovela-receipt"})
+	if err != nil || !result.Accepted || result.EffectStatus != "observed" || result.MissionStatus != "completed" {
+		t.Fatalf("effect report = %+v, err = %v", result, err)
+	}
+	edge, err := c.GetEdge(ctx, "edge-1")
+	if err != nil || edge.ID != "edge-1" || edge.TenantID != "tenant-1" {
+		t.Fatalf("edge = %+v, err = %v", edge, err)
+	}
+
+	want := []string{
+		"POST /missions/mission:wh3%2Fpatrol-17/operations?",
+		"GET /missions/mission:wh3%2Fpatrol-17/operations?",
+		"POST /missions/mission:wh3%2Fpatrol-17/cancel?",
+		"POST /missions/mission:wh3%2Fpatrol-17/effect-reports?",
+		"GET /edges/edge-1?",
+	}
+	if len(requests) != len(want) {
+		t.Fatalf("requests = %v", requests)
+	}
+	for i := range want {
+		if requests[i] != want[i] {
+			t.Fatalf("request[%d] = %q, want %q", i, requests[i], want[i])
+		}
+	}
+	for i := 0; i < 4; i++ {
+		if !strings.Contains(requests[i], "%2F") {
+			t.Fatalf("request[%d] = %q, want encoded slash %%2F", i, requests[i])
+		}
+	}
+
+	if got := bodies["POST /missions/mission:wh3/patrol-17/cancel"]; !strings.Contains(got, `"reason":"reason"`) {
+		t.Fatalf("cancel body = %q, want reason", got)
+	}
+	if got := bodies["POST /missions/mission:wh3/patrol-17/effect-reports"]; !strings.Contains(got, `"report_id":"report-1"`) {
+		t.Fatalf("effect report body = %q", got)
+	}
+}
+
 func TestMissionErrorMapping(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -233,6 +316,24 @@ func TestEffectExecutionStopConfirmedPointer(t *testing.T) {
 	}
 	if strings.Contains(string(raw), "stop_confirmed") {
 		t.Fatalf("body = %s, want stop_confirmed omitted", raw)
+	}
+}
+
+func TestEdgeReadErrorMapsAPIError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(w).Encode(map[string]string{"code": "edge_not_found", "message": "edge does not exist"})
+	}))
+	defer srv.Close()
+	c, _ := New(Config{BaseURL: srv.URL})
+	_, err := c.GetEdge(context.Background(), "edge-1")
+	var apiErr *APIError
+	if !errors.As(err, &apiErr) {
+		t.Fatalf("err = %v, want APIError", err)
+	}
+	if apiErr.StatusCode != http.StatusNotFound || apiErr.Code != "edge_not_found" {
+		t.Fatalf("apiErr = %+v", apiErr)
 	}
 }
 
