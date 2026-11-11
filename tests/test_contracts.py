@@ -1,5 +1,6 @@
 import hashlib
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -35,6 +36,9 @@ CANONICAL = [
       "effect-report-completion-claim.json",
       "effect-report-observed-claim.json"]),
 ]
+
+def normalized_sha256(path):
+    return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 def load(rel):
     return json.loads((CONTRACTS / rel).read_text(encoding="utf-8"))
@@ -88,11 +92,24 @@ class ContractTests(unittest.TestCase):
             with self.subTest(schema=str(path.relative_to(ROOT))):
                 walk(json.loads(path.read_text(encoding="utf-8")))
 
+    def test_normalized_sha256_ignores_line_endings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            lf = Path(tmp) / "lf.json"
+            crlf = Path(tmp) / "crlf.json"
+            content = b'{"key": "value"}\n'
+            lf.write_bytes(content)
+            crlf.write_bytes(content.replace(b"\n", b"\r\n"))
+            self.assertNotEqual(
+                hashlib.sha256(lf.read_bytes()).hexdigest(),
+                hashlib.sha256(crlf.read_bytes()).hexdigest(),
+            )
+            self.assertEqual(normalized_sha256(lf), normalized_sha256(crlf))
+
     def test_sync_manifest_matches(self):
         manifest = json.loads((CONTRACTS / "sync-manifest.json").read_text(encoding="utf-8"))
         self.assertEqual("KINETOVELA/contracts", manifest["source"])
         for entry in manifest["files"]:
-            digest = hashlib.sha256((CONTRACTS / entry["path"]).read_bytes()).hexdigest()
+            digest = normalized_sha256(CONTRACTS / entry["path"])
             with self.subTest(path=entry["path"]):
                 self.assertEqual(entry["sha256"], digest)
 
