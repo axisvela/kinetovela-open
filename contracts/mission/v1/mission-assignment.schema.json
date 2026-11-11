@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KINETOVELA MissionAssignment v1",
+  "type": "object",
+  "required": ["schema_version", "assignment_id", "mission_ref", "robot_ref", "lease_ref", "fencing_token", "assignment_reason"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "assignment_id": { "type": "string", "minLength": 1 },
+    "mission_ref": { "type": "string", "minLength": 1 },
+    "robot_ref": { "type": "string", "minLength": 1 },
+    "lease_ref": { "type": "string", "minLength": 1 },
+    "fencing_token": { "type": "integer", "minimum": 1 },
+    "assignment_reason": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

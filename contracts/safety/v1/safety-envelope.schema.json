@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KINETOVELA SafetyEnvelope v1",
+  "type": "object",
+  "required": ["schema_version", "safety_envelope_id", "spatial_bounds", "temporal_bounds", "fallback"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "safety_envelope_id": { "type": "string", "minLength": 1 },
+    "spatial_bounds": { "type": "object" },
+    "kinematic_bounds": { "type": "object" },
+    "environmental_bounds": { "type": "object" },
+    "temporal_bounds": { "type": "object" },
+    "fallback": { "enum": ["safe_stop", "hold_position", "return_to_base", "local_complete"] }
+  },
+  "additionalProperties": false
+}

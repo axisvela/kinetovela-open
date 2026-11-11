@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KINETOVELA RobotDescriptor v1",
+  "type": "object",
+  "required": ["schema_version", "robot_id", "class", "hardware_profile_ref", "identity_ref", "site_ref"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "robot_id": { "type": "string", "minLength": 1 },
+    "class": { "type": "string", "minLength": 1 },
+    "hardware_profile_ref": { "type": "string", "minLength": 1 },
+    "identity_ref": { "type": "string", "minLength": 1 },
+    "site_ref": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

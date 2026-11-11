@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KINETOVELA EmbodiedCapabilityBinding v1",
+  "type": "object",
+  "required": ["schema_version", "capability_version_ref", "robot_class", "hardware_requirements", "environment_requirements", "effect_profile"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "capability_version_ref": { "type": "string", "minLength": 1 },
+    "robot_class": { "type": "string", "minLength": 1 },
+    "hardware_requirements": { "type": "object" },
+    "environment_requirements": { "type": "object" },
+    "effect_profile": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

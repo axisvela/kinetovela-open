@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KINETOVELA CompatibilityReport v1",
+  "type": "object",
+  "required": ["schema_version", "report_id", "contract_name", "from_version", "to_version", "compatibility", "summary", "fixture_refs", "generated_at"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "report_id": { "type": "string", "minLength": 1 },
+    "contract_name": { "type": "string", "minLength": 1 },
+    "from_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "to_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "compatibility": { "enum": ["backward_compatible", "breaking", "unknown"] },
+    "summary": { "type": "string", "minLength": 1 },
+    "fixture_refs": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "review_refs": { "type": "array", "items": { "type": "string" } },
+    "generated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

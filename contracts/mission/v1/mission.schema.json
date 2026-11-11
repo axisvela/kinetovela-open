@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/axisvela/KINETOVELA/contracts/mission/v1/mission.schema.json",
+  "title": "KINETOVELA Governed Mission v1",
+  "type": "object",
+  "required": ["schema_version", "mission_id", "plan_ref", "capability_refs", "authority_ref", "safety_envelope_ref", "expected_effects"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "mission_id": { "type": "string", "minLength": 1 },
+    "plan_ref": { "type": "string", "minLength": 1 },
+    "capability_refs": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "authority_ref": { "type": "string", "minLength": 1 },
+    "safety_envelope_ref": { "type": "string", "minLength": 1 },
+    "expected_effects": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "deadline_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

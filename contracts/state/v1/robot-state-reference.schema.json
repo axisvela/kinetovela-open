@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KINETOVELA RobotStateReference v1",
+  "type": "object",
+  "required": ["schema_version", "state_ref", "kind", "observed_at", "freshness_ms", "provenance"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "state_ref": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["observed", "reported", "inferred", "predicted", "simulated"] },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "freshness_ms": { "type": "integer", "minimum": 0 },
+    "provenance": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

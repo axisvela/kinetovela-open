@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KINETOVELA FleetSpec v1",
+  "type": "object",
+  "required": ["schema_version", "fleet_id", "owner", "scheduler_profile", "membership_policy"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "fleet_id": { "type": "string", "minLength": 1 },
+    "owner": { "type": "string", "minLength": 1 },
+    "scheduler_profile": { "type": "string", "minLength": 1 },
+    "membership_policy": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

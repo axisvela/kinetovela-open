@@ -1,0 +1,45 @@
+{
+    "source":  "KINETOVELA/contracts",
+    "files":  [
+                  {
+                      "path":  "authority/v1/offline-lease.schema.json",
+                      "sha256":  "7660832f827401c81041d88f9f78217be10efb5cd5e8058fce053a3d8344fe11"
+                  },
+                  {
+                      "path":  "capability/v1/embodied-capability-binding.schema.json",
+                      "sha256":  "032c0240efc340db697fa8a9165c49f96c33a77c2c1c6c526b3d91fff5a33c0f"
+                  },
+                  {
+                      "path":  "compatibility/v1/compatibility-report.schema.json",
+                      "sha256":  "bcf53bf47723f9f543fc06c355fe6ff6ebc70c2c1546efde835e9503c0dc4602"
+                  },
+                  {
+                      "path":  "evidence/v1/effect-record.schema.json",
+                      "sha256":  "4c3736db4da402f44de6ec2326c5f6819c9fdc8fea1a368cc871194c3324de52"
+                  },
+                  {
+                      "path":  "fleet/v1/fleet-spec.schema.json",
+                      "sha256":  "10e2cbb33fde3c68268655ba51f57b563ffded0cfc915f9971840900fdb98d02"
+                  },
+                  {
+                      "path":  "mission/v1/mission.schema.json",
+                      "sha256":  "d67a153f04b661ad790dcaae1c4479066cca0305a9af7ebbdcd0111db44b3f9a"
+                  },
+                  {
+                      "path":  "mission/v1/mission-assignment.schema.json",
+                      "sha256":  "934603e2ef5dfa637f99413b4a8402077f8121d27bca04a29b2600e52e60f1c5"
+                  },
+                  {
+                      "path":  "robot/v1/robot-descriptor.schema.json",
+                      "sha256":  "acb4a125e678d09fbc46eaa9768cfd810d70f613993af507bcbac4a1d681802e"
+                  },
+                  {
+                      "path":  "safety/v1/safety-envelope.schema.json",
+                      "sha256":  "ac031d19b494e778de0cfa6ad5c1f3222e1dab3bf62f3c88e4f728aa3d670456"
+                  },
+                  {
+                      "path":  "state/v1/robot-state-reference.schema.json",
+                      "sha256":  "cf7c3cf17404caf78a2534fc34811bd9bf64d41bf424b160e3d6301a4ab9c9d4"
+                  }
+              ]
+}
