@@ -93,3 +93,75 @@ class ContractTests(unittest.TestCase):
             digest = hashlib.sha256((CONTRACTS / entry["path"]).read_bytes()).hexdigest()
             with self.subTest(path=entry["path"]):
                 self.assertEqual(entry["sha256"], digest)
+
+    def test_mission_api_paths(self):
+        spec = json.loads((CONTRACTS / "mission/v1/mission-api.openapi.json").read_text(encoding="utf-8"))
+        self.assertEqual("3.1.0", spec["openapi"])
+        self.assertEqual("v1", spec["info"]["x-contract-version"])
+        self.assertEqual("reviewed", spec["info"]["x-contract-status"])
+        self.assertEqual("review.md", spec["info"]["x-review-ref"])
+        self.assertEqual({
+            "/missions",
+            "/missions/{mission_id}",
+            "/missions/{mission_id}/assignments",
+            "/missions/{mission_id}/operations",
+            "/missions/{mission_id}/cancel",
+            "/missions/{mission_id}/effect-reports",
+        }, set(spec["paths"]))
+        self.assertEqual({"get", "post"}, set(spec["paths"]["/missions"]))
+        self.assertEqual({"get"}, set(spec["paths"]["/missions/{mission_id}"]))
+        self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/assignments"]))
+        self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/operations"]))
+        self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/cancel"]))
+        self.assertEqual({"post"}, set(spec["paths"]["/missions/{mission_id}/effect-reports"]))
+
+    def test_mission_api_refs_resolve(self):
+        spec = json.loads((CONTRACTS / "mission/v1/mission-api.openapi.json").read_text(encoding="utf-8"))
+        def walk(value):
+            if isinstance(value, dict):
+                ref = value.get("$ref")
+                if isinstance(ref, str):
+                    self.assertTrue(ref.startswith("#/"), ref)
+                    target = spec
+                    for part in ref[2:].split("/"):
+                        target = target[part]
+                for child in value.values():
+                    walk(child)
+            elif isinstance(value, list):
+                for child in value:
+                    walk(child)
+        walk(spec)
+
+    def test_mission_api_components_match_schemas(self):
+        spec = json.loads((CONTRACTS / "mission/v1/mission-api.openapi.json").read_text(encoding="utf-8"))
+        pairs = {
+            "Mission": "mission/v1/mission.schema.json",
+            "MissionAssignment": "mission/v1/mission-assignment.schema.json",
+            "MissionOperation": "mission/v1/mission-operation.schema.json",
+            "EffectReport": "effect/v1/effect-report.schema.json",
+        }
+        for component, rel in pairs.items():
+            with self.subTest(component=component):
+                a = set(spec["components"]["schemas"][component]["required"])
+                b = set(load(rel)["required"])
+                self.assertEqual(b, a)
+                self.assertEqual(load(rel)["properties"].keys(), spec["components"]["schemas"][component]["properties"].keys())
+
+    def test_mission_api_fixtures(self):
+        spec = json.loads((CONTRACTS / "mission/v1/mission-api.openapi.json").read_text(encoding="utf-8"))
+        def v(name):
+            root = dict(spec)
+            root["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+            root["$ref"] = f"#/components/schemas/{name}"
+            return Draft202012Validator(root, format_checker=FormatChecker())
+        cases = [
+            ("MissionView", "valid/mission-view.json", True),
+            ("AssignmentRequest", "valid/assignment-request.json", True),
+            ("EffectReportResult", "valid/effect-report-result.json", True),
+            ("MissionView", "invalid/mission-view-missing-cancel.json", False),
+            ("AssignmentRequest", "invalid/assignment-request-zero-fence.json", False),
+        ]
+        for component, fixture, accepted in cases:
+            with self.subTest(fixture=fixture):
+                errors = list(v(component).iter_errors(load(f"fixtures/v1/{fixture}")))
+                self.assertEqual(accepted, not errors, errors)

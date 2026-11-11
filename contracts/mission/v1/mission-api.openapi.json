@@ -1,0 +1,447 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "KINETOVELA Mission API",
+    "version": "1.0.0",
+    "x-contract-version": "v1",
+    "x-contract-status": "reviewed",
+    "x-review-ref": "review.md"
+  },
+  "servers": [
+    { "url": "http://127.0.0.1:1926" }
+  ],
+  "security": [
+    { "bearerAuth": [] }
+  ],
+  "paths": {
+    "/missions": {
+      "get": {
+        "operationId": "listMissions",
+        "responses": {
+          "200": {
+            "description": "Missions visible to the caller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MissionView" }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer credentials.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "submitMission",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Mission" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mission accepted and stored in draft state.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MissionView" }
+              }
+            }
+          },
+          "400": {
+            "description": "Mission payload does not satisfy the contract.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer credentials.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{mission_id}": {
+      "get": {
+        "operationId": "getMission",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current mission view.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MissionView" }
+              }
+            }
+          },
+          "404": {
+            "description": "Mission not found.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{mission_id}/assignments": {
+      "post": {
+        "operationId": "assignMission",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AssignmentRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mission assignment recorded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MissionView" }
+              }
+            }
+          },
+          "400": {
+            "description": "Assignment request does not satisfy the contract.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "409": {
+            "description": "Mission is not in a state that accepts an assignment.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{mission_id}/operations": {
+      "post": {
+        "operationId": "submitMissionOperation",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MissionOperation" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mission operation recorded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MissionView" }
+              }
+            }
+          },
+          "400": {
+            "description": "Operation payload does not satisfy the contract.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "409": {
+            "description": "Fencing token or mission state rejected the operation.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{mission_id}/cancel": {
+      "post": {
+        "operationId": "cancelMission",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CancelRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cancellation requested; remote stop is not implied.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MissionView" }
+              }
+            }
+          },
+          "400": {
+            "description": "Cancel request does not satisfy the contract.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "409": {
+            "description": "Mission state does not accept a cancellation request.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{mission_id}/effect-reports": {
+      "post": {
+        "operationId": "reportEffect",
+        "description": "Records an effect report for a mission; an accepted report never transitions the mission to completed.",
+        "parameters": [
+          {
+            "name": "mission_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "minLength": 1 }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EffectReport" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Effect report accepted; the result never reports mission_completed.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EffectReportResult" }
+              }
+            }
+          },
+          "400": {
+            "description": "Effect report does not satisfy the contract.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "409": {
+            "description": "Fencing token or mission state rejected the effect report.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Mission": {
+        "type": "object",
+        "required": ["schema_version", "mission_id", "plan_ref", "capability_refs", "authority_ref", "safety_envelope_ref", "expected_effects"],
+        "properties": {
+          "schema_version": { "const": "1.0.0" },
+          "mission_id": { "type": "string", "minLength": 1 },
+          "plan_ref": { "type": "string", "minLength": 1 },
+          "capability_refs": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "authority_ref": { "type": "string", "minLength": 1 },
+          "safety_envelope_ref": { "type": "string", "minLength": 1 },
+          "expected_effects": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "deadline_at": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "MissionAssignment": {
+        "type": "object",
+        "required": ["schema_version", "assignment_id", "mission_ref", "robot_ref", "lease_ref", "fencing_token", "assignment_reason"],
+        "properties": {
+          "schema_version": { "const": "1.0.0" },
+          "assignment_id": { "type": "string", "minLength": 1 },
+          "mission_ref": { "type": "string", "minLength": 1 },
+          "robot_ref": { "type": "string", "minLength": 1 },
+          "lease_ref": { "type": "string", "minLength": 1 },
+          "fencing_token": { "type": "integer", "minimum": 1 },
+          "assignment_reason": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      },
+      "MissionOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "operation_id", "mission_id", "assignment_id", "edge_id", "fencing_token", "capability_ref", "delegated_operation"],
+        "properties": {
+          "schema_version": { "const": "1.0.0" },
+          "operation_id": { "type": "string", "minLength": 1 },
+          "mission_id": { "type": "string", "minLength": 1 },
+          "assignment_id": { "type": "string", "minLength": 1 },
+          "edge_id": { "type": "string", "minLength": 1 },
+          "fencing_token": { "type": "integer", "minimum": 1 },
+          "capability_ref": { "type": "string", "minLength": 1 },
+          "delegated_operation": { "type": "object" }
+        }
+      },
+      "EffectReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "report_id", "mission_id", "assignment_id", "operation_key", "attempt_id", "node_id", "boot_epoch", "fencing_token", "status", "observed_at", "provenance"],
+        "properties": {
+          "schema_version": { "const": "1.0.0" },
+          "report_id": { "type": "string", "minLength": 1 },
+          "mission_id": { "type": "string", "minLength": 1 },
+          "assignment_id": { "type": "string", "minLength": 1 },
+          "operation_key": { "type": "string", "minLength": 1 },
+          "attempt_id": { "type": "string", "minLength": 1 },
+          "node_id": { "type": "string", "minLength": 1 },
+          "boot_epoch": { "type": "integer", "minimum": 1 },
+          "fencing_token": { "type": "integer", "minimum": 1 },
+          "status": { "enum": ["reported", "observed", "failed", "unknown_effect"] },
+          "observed_at": { "type": "string", "format": "date-time" },
+          "evidence_ref": { "type": "string", "minLength": 1 },
+          "provenance": { "const": "akrovela-receipt" },
+          "execution": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "effect_status": { "enum": ["not_evaluated", "verified", "rejected", "unknown"] },
+              "cancel_status": { "enum": ["requested", "stop_confirmed", "unknown"] },
+              "stop_confirmed": { "type": "boolean" },
+              "contract_mode": { "const": "live" },
+              "execution_status": { "enum": ["accepted", "started", "completed", "failed", "unknown"] },
+              "receipt_ref": { "type": "string", "minLength": 1 }
+            }
+          },
+          "details": { "type": "object", "maxProperties": 20 }
+        }
+      },
+      "MissionView": {
+        "type": "object",
+        "required": ["mission", "status", "assignment", "operations", "cancel_requested", "updated_at"],
+        "properties": {
+          "mission": { "$ref": "#/components/schemas/Mission" },
+          "status": {
+            "enum": ["draft", "validated", "assigned", "dispatched", "executing", "paused", "reconciling", "completed", "failed", "cancelled", "unknown_effect", "expired"]
+          },
+          "assignment": { "$ref": "#/components/schemas/MissionAssignment" },
+          "operations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MissionOperation" }
+          },
+          "cancel_requested": { "type": "boolean" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "AssignmentRequest": {
+        "type": "object",
+        "required": ["edge_id", "robot_ref", "lease_ref", "fencing_token", "assignment_reason"],
+        "properties": {
+          "edge_id": { "type": "string", "minLength": 1 },
+          "robot_ref": { "type": "string", "minLength": 1 },
+          "lease_ref": { "type": "string", "minLength": 1 },
+          "fencing_token": { "type": "integer", "minimum": 1 },
+          "assignment_reason": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      },
+      "CancelRequest": {
+        "type": "object",
+        "required": ["reason"],
+        "properties": {
+          "reason": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      },
+      "EffectReportResult": {
+        "type": "object",
+        "required": ["accepted", "effect_status", "mission_status"],
+        "properties": {
+          "accepted": { "type": "boolean" },
+          "effect_status": { "type": "string" },
+          "mission_status": {
+            "enum": ["draft", "validated", "assigned", "dispatched", "executing", "paused", "reconciling", "completed", "failed", "cancelled", "unknown_effect", "expired"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

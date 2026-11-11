@@ -1,0 +1,24 @@
+{
+  "mission": {
+    "schema_version": "1.0.0",
+    "mission_id": "mission:wh3/patrol-17",
+    "plan_ref": "plan:wh3/patrol@sha256:abc123",
+    "capability_refs": ["cap:warehouse.navigate@1.0.0"],
+    "authority_ref": "grant:wh3-ops-2026-11",
+    "safety_envelope_ref": "safe:wh3/tb4-01-v1",
+    "expected_effects": ["robot:tb4-01.pose=target-17"],
+    "deadline_at": "2026-11-11T12:00:00Z"
+  },
+  "status": "assigned",
+  "assignment": {
+    "schema_version": "1.0.0",
+    "assignment_id": "assignment:wh3/patrol-17/1",
+    "mission_ref": "mission:wh3/patrol-17",
+    "robot_ref": "robot:tb4-01",
+    "lease_ref": "lease:wh3/tb4-01/4",
+    "fencing_token": 42,
+    "assignment_reason": "nearest eligible robot"
+  },
+  "operations": [],
+  "updated_at": "2026-11-11T10:00:00Z"
+}

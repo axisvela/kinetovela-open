@@ -1,0 +1,7 @@
+{
+  "edge_id": "akrovela-node-wh3-01",
+  "robot_ref": "robot:tb4-01",
+  "lease_ref": "lease:wh3/tb4-01/4",
+  "fencing_token": 42,
+  "assignment_reason": "nearest eligible robot"
+}
