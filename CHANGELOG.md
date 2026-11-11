@@ -16,6 +16,10 @@ git tag).
   operation, cancel and effect-report paths.
 - Add the Mission and EffectReport review records that name the negative and fault
   cases and the exact commits reviewed.
+- Add Go SDK Mission lifecycle methods (`SubmitMission`, `GetMission`,
+  `ListMissions`, `AssignMission`, `SubmitMissionOperation`,
+  `GetMissionOperations`, `CancelMission`, `ReportEffect`), the `GetEdge` read
+  method and `APIError` mapping for structured error responses.
 
 ## 1.0.0 - 2026-08-21
 
