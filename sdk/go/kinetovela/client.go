@@ -1,4 +1,4 @@
-// Package kinetovela is the public Go client for the KINETOVELA API.
+﻿// Package kinetovela is the public Go client for the KINETOVELA API.
 package kinetovela
 
 import (
@@ -461,3 +461,4 @@ func (c *Client) do(ctx context.Context, method, path string, payload any, okSta
 	snippet, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
 	return &HTTPError{StatusCode: resp.StatusCode, Body: string(snippet)}
 }
+
