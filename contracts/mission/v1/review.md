@@ -56,6 +56,23 @@ repository is not external sign-off.
 - Effect reports never carry a `mission_completed` field and cannot complete a
   Mission.
 
+## Additive Pagination Update (2026-11-12)
+
+An additive, backward-compatible update was reviewed in-repository:
+
+- `GET /missions` accepts an optional `cursor` query parameter (`string`,
+  `minLength: 1`); omitting it preserves the unpaginated listing behavior.
+- `MissionList` may include `next_cursor` (`string`). It is optional, so existing
+  consumers that read only `missions` remain valid; an empty or absent value
+  means no further page.
+- The Go SDK gained `MissionFilter.Cursor`, `MissionPage` and
+  `ListMissionsPage`; `ListMissions` remains a compatibility wrapper returning
+  `page.Missions`.
+
+This update was verified by the repository contract tests and SDK tests only. It
+is not a new external review, customer sign-off, runtime conformance or security
+certification.
+
 ## Residual Risks
 
 | Risk | Effect | Next gate |

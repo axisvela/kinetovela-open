@@ -136,9 +136,11 @@ class ContractTests(unittest.TestCase):
 
         list_params = spec["paths"]["/missions"]["get"].get("parameters", [])
         self.assertEqual(
-            {"edge_id", "status", "limit"},
+            {"edge_id", "status", "limit", "cursor"},
             {p["name"] for p in list_params if p.get("in") == "query"},
         )
+        mission_list = spec["components"]["schemas"]["MissionList"]
+        self.assertIn("next_cursor", mission_list["properties"])
 
         submit = spec["paths"]["/missions"]["post"]["responses"]["201"]["description"]
         self.assertIn("validated", submit)

@@ -186,6 +186,12 @@ type MissionFilter struct {
 	EdgeID string
 	Status string
 	Limit  int
+	Cursor string
+}
+
+type MissionPage struct {
+	Missions   []MissionView `json:"missions"`
+	NextCursor string        `json:"next_cursor"`
 }
 
 func New(cfg Config) (*Client, error) {
@@ -267,7 +273,7 @@ func (c *Client) GetMission(ctx context.Context, missionID string) (*MissionView
 	return &out, nil
 }
 
-func (c *Client) ListMissions(ctx context.Context, filter MissionFilter) ([]MissionView, error) {
+func (c *Client) ListMissionsPage(ctx context.Context, filter MissionFilter) (MissionPage, error) {
 	query := url.Values{}
 	if filter.EdgeID != "" {
 		query.Set("edge_id", filter.EdgeID)
@@ -278,15 +284,26 @@ func (c *Client) ListMissions(ctx context.Context, filter MissionFilter) ([]Miss
 	if filter.Limit > 0 {
 		query.Set("limit", strconv.Itoa(filter.Limit))
 	}
+	if filter.Cursor != "" {
+		query.Set("cursor", filter.Cursor)
+	}
 	path := "/missions"
 	if encoded := query.Encode(); encoded != "" {
 		path += "?" + encoded
 	}
-	var out MissionList
+	var out MissionPage
 	if err := c.doMissionJSON(ctx, http.MethodGet, path, nil, &out, http.StatusOK); err != nil {
+		return MissionPage{}, err
+	}
+	return out, nil
+}
+
+func (c *Client) ListMissions(ctx context.Context, filter MissionFilter) ([]MissionView, error) {
+	page, err := c.ListMissionsPage(ctx, filter)
+	if err != nil {
 		return nil, err
 	}
-	return out.Missions, nil
+	return page.Missions, nil
 }
 
 func (c *Client) AssignMission(ctx context.Context, missionID string, request AssignmentRequest) (*MissionView, error) {

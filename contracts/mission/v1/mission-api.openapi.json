@@ -37,6 +37,12 @@
             "in": "query",
             "required": false,
             "schema": { "type": "integer", "minimum": 1 }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "minLength": 1 }
           }
         ],
         "responses": {
@@ -470,7 +476,8 @@
           "missions": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/MissionView" }
-          }
+          },
+          "next_cursor": { "type": "string" }
         },
         "additionalProperties": false
       },

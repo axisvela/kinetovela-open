@@ -395,3 +395,73 @@ func TestEdgeErrorStillHTTPError(t *testing.T) {
 		t.Fatalf("err = %v, want HTTPError", err)
 	}
 }
+
+func TestListMissionsPageSendsCursor(t *testing.T) {
+	var query string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		query = r.URL.RawQuery
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(MissionPage{})
+	}))
+	defer srv.Close()
+
+	c, err := New(Config{BaseURL: srv.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := c.ListMissionsPage(context.Background(), MissionFilter{Cursor: "cursor:wh3/next"}); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(query, "cursor=cursor%3Awh3%2Fnext") {
+		t.Fatalf("query = %q, want encoded cursor", query)
+	}
+}
+
+func TestListMissionsPageParsesNextCursor(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"missions":   []MissionView{{Status: "validated"}},
+			"next_cursor": "cursor:wh3/next",
+		})
+	}))
+	defer srv.Close()
+
+	c, err := New(Config{BaseURL: srv.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	page, err := c.ListMissionsPage(context.Background(), MissionFilter{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if page.NextCursor != "cursor:wh3/next" {
+		t.Fatalf("NextCursor = %q, want parsed cursor", page.NextCursor)
+	}
+	if len(page.Missions) != 1 || page.Missions[0].Status != "validated" {
+		t.Fatalf("Missions = %+v, want one validated mission", page.Missions)
+	}
+}
+
+func TestListMissionsCompatibility(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"missions":   []MissionView{{Status: "assigned"}},
+			"next_cursor": "cursor:wh3/next",
+		})
+	}))
+	defer srv.Close()
+
+	c, err := New(Config{BaseURL: srv.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	missions, err := c.ListMissions(context.Background(), MissionFilter{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(missions) != 1 || missions[0].Status != "assigned" {
+		t.Fatalf("missions = %+v, want wrapper to return page.Missions", missions)
+	}
+}
