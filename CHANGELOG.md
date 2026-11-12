@@ -4,7 +4,7 @@ All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
 and stay synchronized with the core `KINETOVELA` releases (sharing the same
 git tag).
 
-## Unreleased
+## 3.1.0 - 2026-11-11
 
 - Add the Go SDK client: health, version, fleet SLO, edge registration,
   heartbeat, mission bind/unbind, and sync reporting.

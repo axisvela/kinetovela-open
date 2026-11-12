@@ -15,7 +15,7 @@ import (
 )
 
 // Version is the SDK semantic version, synchronized with core releases.
-const Version = "1.0.0"
+const Version = "3.1.0"
 
 type Config struct {
 	BaseURL    string
