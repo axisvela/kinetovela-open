@@ -479,3 +479,4 @@ func (c *Client) do(ctx context.Context, method, path string, payload any, okSta
 	return &HTTPError{StatusCode: resp.StatusCode, Body: string(snippet)}
 }
 
+
