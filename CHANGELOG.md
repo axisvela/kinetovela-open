@@ -4,6 +4,20 @@ All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
 and stay synchronized with the core `KINETOVELA` releases (sharing the same
 git tag).
 
+## 3.2.0 - 2026-11-13
+
+- Align the public SDK and core version at `3.2.0`.
+- Add additive cursor pagination to the Mission API: the `GET /missions`
+  `cursor` query parameter and `next_cursor` response field. Ordering is
+  `updated_at DESC, mission_id DESC`; `limit` defaults to 100 and caps at 500.
+- Add `MissionFilter.Cursor`, `MissionPage` and
+  `Client.ListMissionsPage`. `ListMissions` remains as a compatibility wrapper
+  returning the page's Missions.
+- Core `3.2.0` persists the Mission control plane in PostgreSQL and enforces
+  strict tenant scoping; no existing operation or Mission wire shape breaks.
+- Publish binaries for core release 3.2.0 across windows/amd64, linux/amd64,
+  and darwin/amd64.
+
 ## 3.1.0 - 2026-11-12
 
 - Add the Go SDK client: health, version, fleet SLO, edge registration,
