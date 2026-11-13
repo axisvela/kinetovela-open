@@ -60,8 +60,11 @@ repository is not external sign-off.
 
 An additive, backward-compatible update was reviewed in-repository:
 
-- `GET /missions` accepts an optional `cursor` query parameter (`string`,
-  `minLength: 1`); omitting it preserves the unpaginated listing behavior.
+- `GET /missions` accepts optional `limit` (`integer`, minimum 1) and `cursor`
+  (`string`, `minLength: 1`) query parameters. Omitting `limit` uses the default
+  page size of 100; values above 500 are capped at 500. Listing is ordered by
+  `updated_at` descending then `mission_id` descending, so the first page is not
+  the previous ascending unpaginated listing.
 - `MissionList` may include `next_cursor` (`string`). It is optional, so existing
   consumers that read only `missions` remain valid; an empty or absent value
   means no further page.

@@ -421,7 +421,7 @@ func TestListMissionsPageParsesNextCursor(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"missions":   []MissionView{{Status: "validated"}},
+			"missions":    []MissionView{{Status: "validated"}},
 			"next_cursor": "cursor:wh3/next",
 		})
 	}))
@@ -447,7 +447,7 @@ func TestListMissionsCompatibility(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"missions":   []MissionView{{Status: "assigned"}},
+			"missions":    []MissionView{{Status: "assigned"}},
 			"next_cursor": "cursor:wh3/next",
 		})
 	}))
