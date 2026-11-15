@@ -1,4 +1,4 @@
-﻿// Package kinetovela is the public Go client for the KINETOVELA API.
+// Package kinetovela is the public Go client for the KINETOVELA API.
 package kinetovela
 
 import (
@@ -15,7 +15,7 @@ import (
 )
 
 // Version is the SDK semantic version, synchronized with core releases.
-const Version = "3.2.0"
+const Version = "3.3.0"
 
 type Config struct {
 	BaseURL    string
@@ -478,5 +478,6 @@ func (c *Client) do(ctx context.Context, method, path string, payload any, okSta
 	snippet, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
 	return &HTTPError{StatusCode: resp.StatusCode, Body: string(snippet)}
 }
+
 
 

@@ -1,8 +1,16 @@
-﻿# Changelog
+# Changelog
 
 All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
 and stay synchronized with the core `KINETOVELA` releases (sharing the same
 git tag).
+
+## 3.3.0 - 2026-11-15
+
+- Align the public SDK and core version at `3.3.0`.
+- Core `3.3.0` adds opt-in PostgreSQL persistence for edge registration and
+  coordination state (migration `000011`); the memory store remains the default.
+- No public wire-contract change; the reviewed KINETOVELA contracts are carried
+  forward.
 
 ## 3.2.0 - 2026-11-13
 
@@ -331,6 +339,7 @@ git tag).
 
 - Initial public interface baseline: API contracts, SDK, examples, and
   architecture documentation.
+
 
 
 
