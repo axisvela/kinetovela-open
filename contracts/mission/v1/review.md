@@ -35,7 +35,7 @@ repository is not external sign-off.
 | Stale fencing token | Reject with a conflict; no later operation or effect accepted | Schema minimum and server gate; stateful test required |
 | Duplicate assignment | Reject the second assignment; do not silently replace robot or lease | Mission state gate; stateful test required |
 | Cross-tenant edge assignment | Reject; no cross-tenant read or write | Authority scope binding and review |
-| Missing or mismatched workspace | Reject an assignment without `workspace_id`; reject an operation whose delegated workspace differs from the assignment | Server gate; `assignment-request.json` carries `wh3` |
+| Missing or mismatched workspace | Reject a Mission or assignment without `workspace_id`; reject an assignment or operation whose workspace differs from the Mission | Server gate; `mission.json` and `assignment-request.json` carry `wh3` |
 | Unknown Mission | Reject with `404`; do not create an implicit Mission | Mission API response contract |
 | Operation reference mismatch | Reject when path `mission_id`, body `mission_id`, `assignment_id` or `edge_id` disagree | Phase 2 server gate; `mission-operation-missing-assignment.json` only tests an absent field, not a mismatch |
 | Receipt or effect report presented as Mission completion | Reject; an accepted report never transitions the Mission to `completed` | `effect-report-completion-claim.json`; Mission API response contract |
@@ -81,10 +81,11 @@ certification.
 
 An additive, backward-compatible schema update was reviewed in-repository:
 
-- `MissionAssignment` and `AssignmentRequest` may include `workspace_id`
-  (`string`, `minLength: 1`). The field is optional in the v1 schema so existing
-  readers remain valid; the KINETOVELA server requires it for new assignments and
-  requires a delegated operation's `scope.workspace_id` to match the assignment.
+- `Mission`, `MissionAssignment` and `AssignmentRequest` may include
+  `workspace_id` (`string`, `minLength: 1`). The field is optional in the v1
+  schema so existing readers remain valid; the KINETOVELA server requires it for
+  new Missions and assignments and requires the delegated operation
+  `scope.workspace_id` to match the assignment.
 - The Go SDK gained `MissionAssignment.WorkspaceID` and
   `AssignmentRequest.WorkspaceID`.
 - This update was verified by the repository contract tests and SDK tests only.

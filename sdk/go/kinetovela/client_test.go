@@ -128,7 +128,7 @@ func TestMissionSubmitGetListAssign(t *testing.T) {
 		t.Fatal(err)
 	}
 	ctx := context.Background()
-	mission := Mission{SchemaVersion: "1.0.0", MissionID: "mission:wh3/patrol-17", PlanRef: "plan:wh3/patrol", CapabilityRefs: []string{"cap:warehouse.navigate@1.0.0"}, AuthorityRef: "grant:wh3-ops", SafetyEnvelopeRef: "safe:wh3", ExpectedEffects: []string{"robot:tb4-01.pose=target-17"}}
+	mission := Mission{SchemaVersion: "1.0.0", MissionID: "mission:wh3/patrol-17", WorkspaceID: "wh3", PlanRef: "plan:wh3/patrol", CapabilityRefs: []string{"cap:warehouse.navigate@1.0.0"}, AuthorityRef: "grant:wh3-ops", SafetyEnvelopeRef: "safe:wh3", ExpectedEffects: []string{"robot:tb4-01.pose=target-17"}}
 	if _, err := c.SubmitMission(ctx, mission); err != nil {
 		t.Fatal(err)
 	}
@@ -157,7 +157,7 @@ func TestMissionSubmitGetListAssign(t *testing.T) {
 		}
 	}
 
-	wantSubmitBody := `{"schema_version":"1.0.0","mission_id":"mission:wh3/patrol-17","plan_ref":"plan:wh3/patrol","capability_refs":["cap:warehouse.navigate@1.0.0"],"authority_ref":"grant:wh3-ops","safety_envelope_ref":"safe:wh3","expected_effects":["robot:tb4-01.pose=target-17"]}`
+	wantSubmitBody := `{"schema_version":"1.0.0","mission_id":"mission:wh3/patrol-17","workspace_id":"wh3","plan_ref":"plan:wh3/patrol","capability_refs":["cap:warehouse.navigate@1.0.0"],"authority_ref":"grant:wh3-ops","safety_envelope_ref":"safe:wh3","expected_effects":["robot:tb4-01.pose=target-17"]}`
 	if got := bodies["POST /missions"]; got != wantSubmitBody {
 		t.Fatalf("submit body = %q, want %q", got, wantSubmitBody)
 	}

@@ -91,6 +91,7 @@ func (e *APIError) Error() string {
 type Mission struct {
 	SchemaVersion     string     `json:"schema_version"`
 	MissionID         string     `json:"mission_id"`
+	WorkspaceID       string     `json:"workspace_id,omitempty"`
 	PlanRef           string     `json:"plan_ref"`
 	CapabilityRefs    []string   `json:"capability_refs"`
 	AuthorityRef      string     `json:"authority_ref"`

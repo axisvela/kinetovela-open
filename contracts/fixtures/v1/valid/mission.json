@@ -1,6 +1,7 @@
 {
   "schema_version": "1.0.0",
   "mission_id": "mission:warehouse/pallet-342",
+  "workspace_id": "wh3",
   "plan_ref": "plan:warehouse/pallet-relocation@sha256:abc123",
   "capability_refs": ["cap:warehouse.move-pallet@3.2.0"],
   "authority_ref": "grant:warehouse-ops-2026-08",

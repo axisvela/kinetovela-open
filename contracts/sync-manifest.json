@@ -23,7 +23,7 @@
                   },
                   {
                       "path":  "mission/v1/mission.schema.json",
-                      "sha256":  "d67a153f04b661ad790dcaae1c4479066cca0305a9af7ebbdcd0111db44b3f9a"
+                      "sha256":  "a5a7ff0cab0ae5649a2fd61c4e44f556f6fd2a8247173fab3b301b3f86b70c98"
                   },
                   {
                       "path":  "mission/v1/mission-assignment.schema.json",
