@@ -4,6 +4,14 @@ All notable KINETOVELA Open changes use semantic versioning: `major.minor.patch`
 and stay synchronized with the core `KINETOVELA` releases (sharing the same
 git tag).
 
+## 3.4.0 - 2026-11-15
+
+- Align the public SDK and core version at `3.4.0`.
+- Core `3.4.0` adds edge registry tenant scoping, limit/cursor pagination with
+  store-level filtering, and the read-only `kinetovela-reconcile` report.
+- No public wire-contract change; the reviewed KINETOVELA contracts are carried
+  forward.
+
 ## 3.3.0 - 2026-11-15
 
 - Align the public SDK and core version at `3.3.0`.
