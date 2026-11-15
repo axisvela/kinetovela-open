@@ -7,6 +7,7 @@
     "schema_version": { "const": "1.0.0" },
     "assignment_id": { "type": "string", "minLength": 1 },
     "mission_ref": { "type": "string", "minLength": 1 },
+    "workspace_id": { "type": "string", "minLength": 1 },
     "robot_ref": { "type": "string", "minLength": 1 },
     "lease_ref": { "type": "string", "minLength": 1 },
     "fencing_token": { "type": "integer", "minimum": 1 },

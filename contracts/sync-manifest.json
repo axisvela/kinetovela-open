@@ -27,7 +27,7 @@
                   },
                   {
                       "path":  "mission/v1/mission-assignment.schema.json",
-                      "sha256":  "934603e2ef5dfa637f99413b4a8402077f8121d27bca04a29b2600e52e60f1c5"
+                      "sha256":  "c5e41083770dc5b39f5517c9234c084cf9d0fa2b3686f92bb90c8b32377947c0"
                   },
                   {
                       "path":  "robot/v1/robot-descriptor.schema.json",

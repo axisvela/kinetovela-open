@@ -14,6 +14,7 @@
     "schema_version": "1.0.0",
     "assignment_id": "assignment:wh3/patrol-17/1",
     "mission_ref": "mission:wh3/patrol-17",
+    "workspace_id": "wh3",
     "robot_ref": "robot:tb4-01",
     "lease_ref": "lease:wh3/tb4-01/4",
     "fencing_token": 42,

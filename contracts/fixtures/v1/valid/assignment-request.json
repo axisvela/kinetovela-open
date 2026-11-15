@@ -1,5 +1,6 @@
 {
   "edge_id": "akrovela-node-wh3-01",
+  "workspace_id": "wh3",
   "robot_ref": "robot:tb4-01",
   "lease_ref": "lease:wh3/tb4-01/4",
   "fencing_token": 42,

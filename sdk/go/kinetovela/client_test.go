@@ -138,7 +138,7 @@ func TestMissionSubmitGetListAssign(t *testing.T) {
 	if _, err := c.ListMissions(ctx, MissionFilter{EdgeID: "edge-1", Status: "validated", Limit: 10}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := c.AssignMission(ctx, "mission:wh3/patrol-17", AssignmentRequest{EdgeID: "edge-1", RobotRef: "robot:tb4-01", LeaseRef: "lease:wh3/tb4-01/4", FencingToken: 42, AssignmentReason: "nearest"}); err != nil {
+	if _, err := c.AssignMission(ctx, "mission:wh3/patrol-17", AssignmentRequest{EdgeID: "edge-1", WorkspaceID: "wh3", RobotRef: "robot:tb4-01", LeaseRef: "lease:wh3/tb4-01/4", FencingToken: 42, AssignmentReason: "nearest"}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -162,7 +162,7 @@ func TestMissionSubmitGetListAssign(t *testing.T) {
 		t.Fatalf("submit body = %q, want %q", got, wantSubmitBody)
 	}
 
-	wantAssignBody := `{"edge_id":"edge-1","robot_ref":"robot:tb4-01","lease_ref":"lease:wh3/tb4-01/4","fencing_token":42,"assignment_reason":"nearest"}`
+	wantAssignBody := `{"edge_id":"edge-1","workspace_id":"wh3","robot_ref":"robot:tb4-01","lease_ref":"lease:wh3/tb4-01/4","fencing_token":42,"assignment_reason":"nearest"}`
 	if got := bodies["POST /missions/mission:wh3/patrol-17/assignments"]; got != wantAssignBody {
 		t.Fatalf("assign body = %q, want %q", got, wantAssignBody)
 	}

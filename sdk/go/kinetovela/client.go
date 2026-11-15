@@ -103,6 +103,7 @@ type MissionAssignment struct {
 	SchemaVersion    string `json:"schema_version"`
 	AssignmentID     string `json:"assignment_id"`
 	MissionRef       string `json:"mission_ref"`
+	WorkspaceID      string `json:"workspace_id,omitempty"`
 	RobotRef         string `json:"robot_ref"`
 	LeaseRef         string `json:"lease_ref"`
 	FencingToken     int64  `json:"fencing_token"`
@@ -139,6 +140,7 @@ type MissionOperationList struct {
 
 type AssignmentRequest struct {
 	EdgeID           string `json:"edge_id"`
+	WorkspaceID      string `json:"workspace_id,omitempty"`
 	RobotRef         string `json:"robot_ref"`
 	LeaseRef         string `json:"lease_ref"`
 	FencingToken     int64  `json:"fencing_token"`
